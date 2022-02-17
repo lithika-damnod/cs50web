@@ -4,14 +4,50 @@
     Encyclopedia
 {% endblock %}
 
+{% block head %}
+    <style>
+        .edit-btn{
+            display: inline-block;
+            background-color: rgb(94, 231, 94); 
+            border: none; 
+            border-radius: 10px;
+            margin: 5px; 
+        }
+        .edit-btn:hover{
+            background-color: rgb(151, 252, 151);
+        }
+        .remove-btn{
+            display: inline-block; 
+            border: none; 
+            background-color: rgb(228, 101, 101);
+            border-radius: 10px; 
+            margin: 5px;    
+        }
+        .remove-btn:hover{
+            background-color: rgb(255, 35, 35);
+        }
+        .wiki-blog{
+            display: flex; 
+            padding: 10px; 
+            justify-content: space-between;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
     <h1>All Pages</h1>
 
     <ul>
         {% for entry in entries %}
-            <a href="{% url 'loadpage' filename=entry %}">
-                <li>{{ entry }}</li>
-            </a>
+            <div class="wiki-blog">
+                <a href="{% url 'loadpage' filename=entry %}">
+                    <li>{{ entry }}</li>
+                </a>
+                <div class="controls">
+                    <button class="edit-btn">Edit</button>
+                    <button class="remove-btn">Remove</button>
+                </div>
+            </div>
         {% endfor %}
     </ul>
 
