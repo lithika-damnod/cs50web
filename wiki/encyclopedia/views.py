@@ -33,6 +33,17 @@ def createEntry(request):
         if form.is_valid():
             entry_title = form.cleaned_data["title"]
             entry_md = form.cleaned_data["md"]
-            util.save_entry(entry_title, entry_md)
-        return redirect("/")
-    return render(request, "encyclopedia/create_entry.html")
+            if util.get_entry(entry_title) == None:
+                util.save_entry(entry_title, entry_md)
+            else:
+                return render(request, "encyclopedia/create_entry.html", {
+                    "textarea": entry_md,
+                    "titleField": entry_title, 
+                    "duplicate_title_found": True
+                })
+        return redirect('loadpage', filename=entry_title)
+    return render(request, "encyclopedia/create_entry.html", {
+        "textarea": "",
+        "titleField": "", 
+        "duplicate_title_found": False
+    })
