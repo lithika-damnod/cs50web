@@ -44,11 +44,12 @@
                     <li>{{ entry }}</li>
                 </a>
                 <div class="controls">
-                    <button class="edit-btn">Edit</button>
+                    <a href="{% url 'editentry' filename=entry %}">
+                        <button class="edit-btn">Edit</button>
+                    </a>
                     <button class="remove-btn">Remove</button>
                 </div>
             </div>
         {% endfor %}
     </ul>
-
 {% endblock %}
