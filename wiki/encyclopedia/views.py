@@ -100,12 +100,13 @@ def search(request):
 def api_deleteEntry(request):
     if request.method == "POST":
         filename = request.POST["filename"]
+        print("deleting.. ( " + filename + " )" )
         util.remove_entry(filename)
         response_data = {
             "status":"deleted", 
             "filename": filename
         }
-        return JsonResponse(response_data)
+        return redirect('index')   
     else:
         return HttpResponse("Method not allowed")
 

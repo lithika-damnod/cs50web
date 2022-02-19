@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block head %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
         .edit-btn{
             display: inline-block;
@@ -31,6 +32,9 @@
             padding: 10px; 
             justify-content: space-between;
         }
+        form{
+            display: inline-block;
+        }
     </style>
 {% endblock %}
 
@@ -47,7 +51,11 @@
                     <a href="{% url 'editentry' filename=entry %}">
                         <button class="edit-btn">Edit</button>
                     </a>
-                    <button class="remove-btn">Remove</button>
+                    <form action="/api/delete" method="post">
+                        {% csrf_token %}
+                        <input type="text" value="{{ entry }}" name="filename" style="display: none;">
+                        <button type="submit" class="remove-btn">Remove</button>
+                    </form>
                 </div>
             </div>
         {% endfor %}
