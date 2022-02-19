@@ -58,11 +58,16 @@
             </div>
             <div class="submit-area">
                 <button type="submit" class="btn btn-success">Submit</button>
-                <button type="button" class="btn btn-danger">Reset</button>
+                <button type="button" class="btn btn-danger" id="reset-btn">Reset</button>
                 {% if duplicate_title_found %}
                     <p class="warn-msg">The title you entered is already in use .. ( try changing your title ) </p>
                 {% endif %}
             </div>
         </form>
     </div>
+    <script> 
+        document.getElementById("reset-btn").addEventListener("click", function(){
+            location.reload(); 
+        }); 
+    </script> 
 {% endblock %}
