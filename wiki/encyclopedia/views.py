@@ -77,3 +77,20 @@ def editEntry(request, filename):
         "titleField": filename, 
         "duplicate_title_found": False
     })
+
+# handles search queries 
+def search(request):
+    q = str(request.GET["q"]).lower() 
+    all_entries = util.list_entries() 
+    results_available = [filename for filename in all_entries if q in filename.lower()]
+    if len(results_available) == 0: # if no result found  
+        return render(request, "encyclopedia/no_search_result_found.html", {
+            "query": q
+        })
+    elif len(results_available) == 1: # if there's only one search result for the search redirect them to that page
+        return loadPage(request, results_available[0])
+    else: # if there's multiple search results
+        return render(request, "encyclopedia/results.html", {
+            "query": q, 
+            "results": results_available
+        })
