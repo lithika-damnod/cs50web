@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, HttpResponse
 from . import util
 import markdown
 from django import forms
-from django.http import JsonResponse
+from random import choice 
 
 # model for getting the input when adding a new entry to the wiki 
 class NewEntryForm(forms.Form):
@@ -102,11 +102,10 @@ def api_deleteEntry(request):
         filename = request.POST["filename"]
         print("deleting.. ( " + filename + " )" )
         util.remove_entry(filename)
-        response_data = {
-            "status":"deleted", 
-            "filename": filename
-        }
         return redirect('index')   
     else:
         return HttpResponse("Method not allowed")
 
+# redirects to a random page
+def randomPage(request):
+    return redirect("loadpage", choice(util.list_entries()))
