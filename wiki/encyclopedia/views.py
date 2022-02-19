@@ -1,7 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from . import util
 import markdown
 from django import forms
+from django.http import JsonResponse
 
 # model for getting the input when adding a new entry to the wiki 
 class NewEntryForm(forms.Form):
@@ -94,3 +95,17 @@ def search(request):
             "query": q, 
             "results": results_available
         })
+
+# deletes an entry: only accepts POST requests
+def api_deleteEntry(request):
+    if request.method == "POST":
+        filename = request.POST["filename"]
+        util.remove_entry(filename)
+        response_data = {
+            "status":"deleted", 
+            "filename": filename
+        }
+        return JsonResponse(response_data)
+    else:
+        return HttpResponse("Method not allowed")
+
