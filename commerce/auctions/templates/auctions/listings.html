@@ -1,0 +1,47 @@
+{% extends "auctions/layout.html" %}
+
+{% block head %}
+    <style>
+        .listing-data{
+            display: flex;
+            justify-content: left;   
+        }
+        .listing-data img{
+            width: 50%;            
+        }
+        .listing-data .data{
+            margin-left: 50px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: right; 
+        }
+        .listing-data .data button{
+            width: 100px; 
+            margin-top: 15px;
+            border: none; 
+            background-color: rgb(97, 97, 238);  
+            color: white; 
+            font-family: calibri;
+        }
+    </style> 
+{% endblock %}
+
+{% block body %}
+    <h2 style="margin-bottom: 20px;">Listings: Broomstick </h2>
+    <div class="listing-data">
+        <div class="tags"></div>
+        <img src="https://images.unsplash.com/photo-1569770218135-bea267ed7e84?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bWFjYm9vayUyMHByb3xlbnwwfHwwfHw%3D&w=1000&q=80">
+        <div class="data">
+            <h4>Nimbus 2000 Broomstick </h4>
+            <h2>$80.00</h2>
+            <p>2 bid(s) so far. Your bid is the current bid.</p>
+            <input type="text" placeholder="Bid">
+            <button type="button">Place Bid</button> 
+            <h3 style="margin-top: 20px;">Details</h3>
+            <ul>
+                <li>Listed by: <a href="#">harry</a></li>
+                <li>Category: No Category Listed</li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
