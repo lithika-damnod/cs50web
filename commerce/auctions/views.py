@@ -70,3 +70,9 @@ def display_listings(request, id):
         return render(request, "auctions/listings.html", {
             "list_id": id
         })
+
+def createListing(request): 
+    if request.method == "POST": 
+        pass
+    else: 
+        return render(request, "auctions/create.html")
