@@ -1,0 +1,24 @@
+.listing-data{
+    display: flex;
+    justify-content: left;   
+}
+.listing-data img{
+    width: 50%;            
+}
+.listing-data .data{
+    margin-left: 50px; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: right; 
+}
+.listing-data .data button{
+    width: 100px; 
+    margin-top: 15px;
+    border: none; 
+    background-color: rgb(97, 97, 238);  
+    color: white; 
+    font-family: calibri;
+}
+body{
+    background-color: yellow; 
+}
