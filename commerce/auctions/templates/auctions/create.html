@@ -1,7 +1,83 @@
 {% extends "auctions/layout.html" %}
+{% load static %}
 
 {% block head %}
+    <title>Create</title> 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{% static 'auctions/create.css' %}">
 {% endblock %}
 
 {% block body %}
+    <div class="container">
+        <h3>Create New Listing</h3>
+        <form>
+            <div class="form-group">
+                <label for="title">Title </label>
+                <input type="text" class="form-control" id="title">
+            </div>
+            <div class="form-group">
+                <label for="description">Description </label>
+                <textarea type="text" class="form-control" id="description"></textarea>
+            </div>
+            <div class="form-row">
+                <div class="col">
+                </div>
+                <div class="col">
+                    <label for="init-bid">Initial Bid </label>
+                    <input type="number" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="image-url">Image URL </label>
+                <input type="text" id="image-url" class="form-control">
+            </div>
+            <div class="category">
+                <div class="items" style="display: flex;">
+                    <div class="cat-item">
+                        <input type="checkbox" class="btn-check" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="btn-check-outlined">Fashion</label><br>
+                    </div>
+                    <div class="cat-item">
+                        <input type="checkbox" class="btn-check" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="btn-check-outlined">Toys</label><br>
+                    </div>
+                </div>
+                <div class="create">
+                    <input type="text" id="add-cat-text">
+                    <button type="button" class="btn btn-outline-dark" id="create-btn">Add</button>
+                </div>
+                <script>
+                    var categories = ["Fashion", "Toys"]; 
+                    document.getElementById("create-btn").addEventListener("click", function(){
+                        // get the value in the input box 
+                        var newCat = document.getElementById("add-cat-text").value; 
+                        console.log(newCat); 
+                        categories.push(newCat); 
+                        // show added category 
+                        var parentCatElem = document.createElement("div");   
+                        parentCatElem.classList.add("cat-item"); 
+
+                        var childCheckBox = document.createElement("input"); 
+                        childCheckBox.classList.add("btn-check");
+                        childCheckBox.setAttribute("type", "checkbox"); 
+                        childCheckBox.setAttribute("autocomplete", "off"); 
+
+                        var childLabel = document.createElement("label"); 
+                        childLabel.classList.add("btn");
+                        childLabel.classList.add("btn-outline-primary");
+                        childLabel.setAttribute("for", "btn-check-outlined"); 
+                        childLabel.innerHTML = newCat; 
+                        
+                        parentCatElem.appendChild(childCheckBox); 
+                        parentCatElem.appendChild(childLabel); 
+                        parentCatElem.innerHTML += "<br>"; 
+                        // print the main element
+                        document.getElementsByClassName("items")[0].appendChild(parentCatElem);  
+                    }); 
+                </script>
+            </div>
+            <button type="button" class="btn btn-success"style="margin-left: 20px; margin-top: 10px;">Create</button>
+        </form> 
+
+    </div>
 {% endblock %}

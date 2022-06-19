@@ -1,0 +1,14 @@
+.category{
+    display: block; 
+    width: 100%; 
+    background-color: rgb(244, 232, 255); 
+    padding: 10px;
+    display: flex; 
+    flex-wrap: wrap;  
+    flex-direction: column;
+    align-items: flex-end;  
+}
+.cat-item{
+    margin: 10px; 
+}
+
