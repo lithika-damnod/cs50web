@@ -16,5 +16,15 @@
                 <p class="product-date">Created Feb, 22, 2020, 6.55 p.m</p>
             </div>
         </div>
+        {% for entry in entries %}
+            <div class="product-box">
+                <img src="{{ entry.pic_url }}" class="product-img">
+                <div class="product-data">
+                    <h4 class="product-title">{{ entry.title }}</h4>
+                    <h5 class="product-price"><b>Price: </b> ${{ entry.currentBid }}</h5>
+                    <p class="product-date">Created {{ entry.created_date }}</p>
+                </div>
+            </div>
+        {% endfor %}
     </div>
 {% endblock %}
