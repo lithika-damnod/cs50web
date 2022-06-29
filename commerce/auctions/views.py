@@ -70,8 +70,14 @@ def display_listings(request, id):
     if request.method == "POST":
         pass
     else:
+        # get data for the corresponding id
+        data = Listing.objects.get(id=id)
+        # get the usernamem of the bid conductor 
+        username = User.objects.get(username=data.creator) 
         return render(request, "auctions/listings.html", {
-            "list_id": id
+            "list_id": id, 
+            "data": data, 
+            "username": username
         })
 
 def createListing(request): 

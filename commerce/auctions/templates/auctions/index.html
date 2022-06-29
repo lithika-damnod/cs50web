@@ -17,14 +17,16 @@
             </div>
         </div>
         {% for entry in entries %}
-            <div class="product-box">
-                <img src="{{ entry.pic_url }}" class="product-img">
-                <div class="product-data">
-                    <h4 class="product-title">{{ entry.title }}</h4>
-                    <h5 class="product-price"><b>Price: </b> ${{ entry.currentBid }}</h5>
-                    <p class="product-date">Created {{ entry.created_date }}</p>
+            <a href="{% url 'displayListings' id=entry.id %}" class="product-link">
+                <div class="product-box" href="#">
+                    <img src="{{ entry.pic_url }}" class="product-img">
+                    <div class="product-data">
+                        <h4 class="product-title">{{ entry.title }}</h4>
+                        <h5 class="product-price"><b>Price: </b> ${{ entry.currentBid }}</h5>
+                        <p class="product-date">Created {{ entry.created_date }}</p>
+                    </div>
                 </div>
-            </div>
+            </a>
         {% endfor %}
     </div>
 {% endblock %}
