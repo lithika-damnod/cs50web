@@ -7,7 +7,7 @@ class User(AbstractUser):
     pass
 
 class Category(models.Model):
-    category = models.CharField(max_length=30)
+    category = models.CharField(max_length=30, primary_key=True)
 
     def __str__(self):
         return f"{self.category}"
@@ -18,7 +18,7 @@ class Listing(models.Model):
     startingBid = models.FloatField()
     currentBid = models.FloatField()
     pic_url = models.CharField(null=False, max_length=300) #picture url
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="product_cat")
+    category = models.ManyToManyField(Category, blank=True, related_name="product_cat")
     creator = models.ForeignKey(User, on_delete=models.PROTECT, related_name="creator")
     watchers = models.ManyToManyField(User, blank=True, related_name="watched_ppl")
     buyer = models.ForeignKey(User, null=True, on_delete=models.PROTECT)
@@ -31,3 +31,11 @@ class Bid(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     offer = models.FloatField()
     date = models.DateTimeField(default=timezone.now)
+
+class Comments(models.Model):
+    auction = models.ForeignKey(Listing, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.CharField(max_length=500)
+
+    def __str__(self):
+        return f"auction: {self.auction} user: {self.user} \n description: {self.comment}"

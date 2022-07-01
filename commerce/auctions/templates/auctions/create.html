@@ -32,63 +32,31 @@
                 <label for="image-url">Image URL </label>
                 <input type="text" id="image-url" class="form-control" name="pic-url">
             </div>
-            <div class="category">
-                <div class="items" style="display: flex;">
-                    <div class="cat-item">
-                        <input type="checkbox" class="btn-check" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btn-check-outlined">Fashion</label><br>
-                    </div>
-                    <div class="cat-item">
-                        <input type="checkbox" class="btn-check" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btn-check-outlined">Toys</label><br>
-                    </div>
+            <br>
+            <label>Category: </label>
+            <div class="categories">
+                <div class="form-check">
+                    <!-- render categories from the backend --> 
+                    {% for item in cats %}     
+                        <input class="form-check-input" type="checkbox" value="{{ item.category }}" id="flexCheckDefault" name="{{item.category}}">
+                        <label class="form-check-label" for="flexCheckDefault">{{ item.category }}</label>
+                        <br>
+                    {% endfor %}
+                    <!-- new categories on frontend goes here --> 
                 </div>
-                <div class="create">
-                    <input type="text" id="add-cat-text">
-                    <button type="button" class="btn btn-outline-dark" id="create-btn">Add</button>
+                <div class="input-cat">
+                    <div class="form-group">
+                        <input type="text" id="cat-desc" class="form-control" name="new-comment" placeholder="new category">
+                    </div>
+                    <button type="button" class="btn" id="cat-add-btn" style="background-color: rgb(245, 245, 130); border: 2px solid rgba(0, 0, 0, 0.339);">Add</button>
                 </div>
-                <script>
-                    var categories = ["Fashion", "Toys"]; 
-                    document.getElementById("create-btn").addEventListener("click", function(){
-                        // get the value in the input box 
-                        var newCat = document.getElementById("add-cat-text").value; 
-                        console.log(newCat); 
-                        categories.push(newCat); 
-                        // show added category 
-                        var parentCatElem = document.createElement("div");   
-                        parentCatElem.classList.add("cat-item"); 
-
-                        var childCheckBox = document.createElement("input"); 
-                        childCheckBox.classList.add("btn-check");
-                        childCheckBox.setAttribute("type", "checkbox"); 
-                        childCheckBox.setAttribute("autocomplete", "off"); 
-
-                        var childLabel = document.createElement("label"); 
-                        childLabel.classList.add("btn");
-                        childLabel.classList.add("btn-outline-primary");
-                        childLabel.setAttribute("for", "btn-check-outlined"); 
-                        childLabel.innerHTML = newCat; 
-                        
-                        parentCatElem.appendChild(childCheckBox); 
-                        parentCatElem.appendChild(childLabel); 
-                        parentCatElem.innerHTML += "<br>"; 
-                        // print the main element
-                        document.getElementsByClassName("items")[0].appendChild(parentCatElem);  
-                    }); 
-                </script>
             </div>
+            <br>
             <button type="submit" class="btn btn-success"style="margin-left: 20px; margin-top: 10px;" id="submit-btn">Create</button>
-            <script>
-                document.getElementById("submit-btn").addEventListener("click", function(){
-                    // arrange selected categories into a list 
-                    var options = document.getElementsByClassName("btn-check"); 
-                    for(var i=0; options.length; options++){
-                        console.log(options[i].value); 
-                    }
-                    console.log("clicked submit"); 
-                }); 
-            </script>
-        </form> 
+            
+            <!-- perform  category appending -->
+            <script src="{% static 'auctions/appendCategory.js' %}"></script>
 
+        </form> 
     </div>
 {% endblock %}

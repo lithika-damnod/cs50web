@@ -1,0 +1,25 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block head %}
+    <link href="{% static 'auctions/watchlist.css' %}" rel="stylesheet"> 
+{% endblock %}
+
+{% block body %}
+    <div class="list-container">
+        <div class="list-block">
+            <div class="menu">
+                <div class="delete-btn"></div>
+            </div>
+            <div class="content">
+                <div class="col-1">
+                    <div class="title">I'm a bit crazy right now</div>
+                    <div class="current-bid">$100.00</div>
+                </div>
+                <div class="col-2">
+
+                </div>
+            </div>
+        </div>        
+    </div>
+{% endblock %}

@@ -19,6 +19,38 @@
     color: white; 
     font-family: calibri;
 }
-body{
-    background-color: yellow; 
+.comment-space{
+    display: block; 
+    background-color: rgb(249, 249, 241); 
+    width: 100%; 
+    height: 100%; 
+    border-radius: 20px;
+    padding: 10px;
+}
+.comment-input{
+    background-color: white; 
+    width: 100%;  
+    padding: 10px;
+}
+.comment-view-block{
+    display: block; 
+    width: 98%; 
+    background-color: rgb(229, 228, 228);
+    border-radius: 5px; 
+    padding-left: 10px; 
+    padding-right: 10px;
+    margin: 5px;
+}
+.commenter-username, .comment-time{
+    font-weight: bolder; 
+    color: rgba(0, 0, 0, 0.59); 
+    padding-top: 2px; 
+     
+}
+.comment-time{
+    font-size: 0.8em;
+    padding-top: 0px;
+}
+.comment{
+    padding: 10px; 
 }

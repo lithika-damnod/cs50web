@@ -1,14 +1,17 @@
-.category{
-    display: block; 
-    width: 100%; 
-    background-color: rgb(244, 232, 255); 
-    padding: 10px;
+.categories{
     display: flex; 
-    flex-wrap: wrap;  
-    flex-direction: column;
-    align-items: flex-end;  
+    align-items: center; 
+    justify-content: space-between; 
 }
-.cat-item{
-    margin: 10px; 
+.input-cat{
+    display: flex;  
+    width: 25%; 
+    height: 60px; 
+    background-color: rgba(164, 230, 164, 0.345); 
+    border-radius: 10px; 
+    padding: 10px; 
+    justify-content: flex-start;
 }
-
+.input-cat input{
+    width: 70%; 
+}
