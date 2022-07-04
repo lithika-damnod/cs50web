@@ -30,7 +30,7 @@
                     <a class="nav-link" href="{% url 'create' %}">Create</a>
                 </li>
                 <li>
-                    <a class="nav-link" href="#">Watchlist</a>
+                    <a class="nav-link" href="{% url 'watchlist' %}">Watchlist</a>
                 </li>
             {% else %}
                 <li class="nav-item">
@@ -39,10 +39,10 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'register' %}">Register</a>
                 </li>
-                <li>
-                    <a class="nav-link" href="#">Categories</a>
-                </li>
             {% endif %}
+            <li>
+                <a class="nav-link" href="{% url 'showCategories' %}">Categories</a>
+            </li>
         </ul>
         <hr>
         {% block body %}

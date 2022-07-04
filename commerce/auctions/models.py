@@ -21,7 +21,7 @@ class Listing(models.Model):
     category = models.ManyToManyField(Category, blank=True, related_name="product_cat")
     creator = models.ForeignKey(User, on_delete=models.PROTECT, related_name="creator")
     watchers = models.ManyToManyField(User, blank=True, related_name="watched_ppl")
-    buyer = models.ForeignKey(User, null=True, on_delete=models.PROTECT)
+    buyer = models.ManyToManyField(User, blank=True, related_name="buyers")
 
     def __str__(self):
         return f"title: {self.title} Starting Bid: {self.startingBid}"
@@ -32,10 +32,11 @@ class Bid(models.Model):
     offer = models.FloatField()
     date = models.DateTimeField(default=timezone.now)
 
-class Comments(models.Model):
+class Comment(models.Model):
     auction = models.ForeignKey(Listing, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.CharField(max_length=500)
+    created_date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"auction: {self.auction} user: {self.user} \n description: {self.comment}"

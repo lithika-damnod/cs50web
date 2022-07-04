@@ -1,0 +1,29 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block head %}
+    <link href="{% static 'auctions/index.css' %}" rel="stylesheet"> 
+{% endblock %}
+
+{% block body %}
+    {% if not results %}
+        <h1 style="color: red;">404</h1>
+        <h1>No results found</h1>
+    {% else %}
+        <h2>Category: {{ id }}</h2>
+        <div class="product-container">
+            {% for entry in results %}
+                <a href="{% url 'displayListings' id=entry.id %}" class="product-link">
+                    <div class="product-box" href="#">
+                        <img src="{{ entry.pic_url }}" class="product-img">
+                        <div class="product-data">
+                            <h4 class="product-title">{{ entry.title }}</h4>
+                            <h5 class="product-price"><b>Price: </b> ${{ entry.currentBid }}</h5>
+                            <p class="product-date">Created {{ entry.created_date }}</p>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

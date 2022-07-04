@@ -1,10 +1,11 @@
+from tkinter import W
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Listing, Category, Bid
+from .models import User, Listing, Category, Bid, Comment
 
 
 def index(request):
@@ -74,10 +75,25 @@ def display_listings(request, id):
         data = Listing.objects.get(id=id)
         # get the usernamem of the bid conductor 
         username = User.objects.get(username=data.creator) 
+        # add watcher :TODO (NOT TESTED) 
+        try:
+            viewer = User.objects.get(id=request.user.id)
+        except User.DoesNotExist:  
+            # add new watcher 
+            update_object = Listing.objects.get(id=id)
+            update_object.watchers.add(viewer)
+            update_object.save()
+
+        # get the auction object
+        auction_object = Listing.objects.get(id=id)
+        # search for comments for the viewing listing
+        all_comments = Comment.objects.filter(auction=auction_object)
+
         return render(request, "auctions/listings.html", {
             "list_id": id, 
             "data": data, 
-            "username": username
+            "username": username, 
+            "comments": all_comments
         })
 
 def createListing(request): 
@@ -98,8 +114,9 @@ def createListing(request):
                 newCat = Category(category=i)
                 newCat.save() 
 
-        # get the id of current signed in user :TODO
-        curr_usr = User.objects.get(username="lithika")
+        # get the id of current signed in user
+        curr_usr = User.objects.get(id=request.user.id)
+        print(f"user: {curr_usr}")
         # Add new entry to Listing table
         newEntry = Listing(title=title, description=description, startingBid=init_bid, currentBid=init_bid, pic_url=pic_url, creator=curr_usr) 
         # Start the Bid with the intial bid of the creator 
@@ -122,3 +139,35 @@ def createListing(request):
 
 def showWatchList(request):
     return render(request, "auctions/watchlist.html")
+
+# API Calls 
+def addComment(request): 
+    if request.method == "POST":
+        comment_desc = request.POST["comment-text"]   
+        list_id = request.POST["list_id"]
+        # add comment to the db 
+        auc = Listing.objects.get(id=list_id)
+        curr_user = User.objects.get(id=request.user.id)
+        newComment = Comment(auction=auc, user=curr_user, comment=comment_desc)
+        newComment.save()
+        print(f"new comment: {comment_desc} id: {list_id}")
+        return HttpResponseRedirect("/listings/" + list_id)
+    else:
+        return JsonResponse({
+            "error":"method not allowed", 
+            "allowed":["POST"]
+        })
+
+def showCats(request):
+    all_categories = Category.objects.all()
+    return render(request, "auctions/categories.html", {
+        "categories" : all_categories
+    })
+
+def listDownCats(request, id):
+    cat_object = Category.objects.get(category=id)
+    results = Listing.objects.filter(category=cat_object)
+    return render(request, "auctions/listCats.html", {
+        "id" : id, 
+        "results": results  
+    })

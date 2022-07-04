@@ -23,31 +23,26 @@
             </ul>
             <div class="comment-space">
                 <div class="comment-input form-group">
-                    <textarea class="form-control"></textarea>
-                    <button type="submit" class="btn btn-info">Comment</button>
+                    <form action="/api/add/comment" method="post">
+                        {% csrf_token %}
+                        <textarea class="form-control" name="comment-text" id="comment-desc"></textarea>
+                        <input type="text" name="list_id" style="display: none;" value="{{ data.id }}">
+                        <button type="submit" class="btn btn-info" id="comment-submit-btn">Comment</button> 
+                    </form>
                 </div>         
-                <div class="comment-view-block">
-                    <div class="commenter-username">
-                        lithikadamnod
-                    </div>  
-                    <div class="comment-time">
-                        June 27, 2022, 4.15 p.m. 
-                    </div>
-                    <div class="comment">
-                        Damn her voice is so clear and pure:) 
-                    </div>
-                </div>
-                <div class="comment-view-block">
-                    <div class="commenter-username">
-                        lithikadamnod
-                    </div>  
-                    <div class="comment-time">
-                        June 27, 2022, 4.15 p.m. 
-                    </div>
-                    <div class="comment">
-                        Damn her voice is so clear and pure:) 
-                    </div>
-                </div>
+                {% for comment in comments %}
+                    <div class="comment-view-block">
+                        <div class="commenter-username">
+                            {{ comment.user.username }}
+                        </div>  
+                        <div class="comment-time">
+                            {{ comment.created_date }}
+                        </div>
+                        <div class="comment">
+                            {{ comment.comment }}
+                        </div>
+                    </div> 
+                {% endfor %}
             </div>
         </div>
     </div>
