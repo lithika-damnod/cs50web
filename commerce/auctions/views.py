@@ -97,12 +97,23 @@ def display_listings(request, id):
         except Listing.DoesNotExist: 
             watchListed=False 
 
+        
+        currentBidYours = True 
+        sortedResults = Bid.objects.filter(auction=auction_object)
+        if sortedResults[len(sortedResults)-1].user == watchingUser:
+            currentBidYours = True 
+        else:
+            currentBidYours = False
+        
+        nBids = Bid.objects.filter(auction=auction_object).count() 
         return render(request, "auctions/listings.html", {
             "list_id": id, 
             "data": data, 
             "username": watchingUser, 
             "comments": all_comments, 
-            "watchListed" : watchListed
+            "watchListed" : watchListed, 
+            "currentBidYours" : currentBidYours, 
+            "nBids": nBids
         })
 
 def createListing(request): 
@@ -218,6 +229,27 @@ def removeWatchList(request):
         return JsonResponse({
             "status":"success" 
         }, status=200)
+    else:
+        return JsonResponse({
+            "error":"method not allowed", 
+            "allowed":["POST"]
+        }, status=405)
+
+def addBid(request):
+    if request.method == "POST":
+        usr = request.POST["user"]   
+        list_id = request.POST["id"]
+        bid_val = request.POST["bid"]
+        usr_obj = User.objects.get(username=usr)
+        list_obj = Listing.objects.get(id=list_id)
+
+        list_obj.currentBid=bid_val 
+        list_obj.save()
+        newBid = Bid(auction=list_obj, user=usr_obj, offer=bid_val)
+        newBid.save()
+        return JsonResponse({
+            "status":"success"
+        })
     else:
         return JsonResponse({
             "error":"method not allowed", 

@@ -4,6 +4,9 @@
 {% block head %}
     <link href="{% static 'auctions/listings.css' %}" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script> 
+        var nBids = "{{ nBids }}"; 
+    </script> 
 {% endblock %}
 
 {% block body %}
@@ -55,10 +58,40 @@
         <img src="{{ data.pic_url }}">
         <div class="data">
             <h4>{{ data.title }}</h4>
-            <h2>${{ data.currentBid }}</h2>
-            <p>2 bid(s) so far. Your bid is the current bid.</p>
-            <input type="text" placeholder="Bid">
-            <button type="button">Place Bid</button> 
+            <h2 id="currentBid">${{ data.currentBid }}</h2>
+            <p><span id="nRecords">{{ nBids }}</span> bid(s) so far. 
+                {% if currentBidYours %}
+                    <span style="color: green;" id="bid-status">Your bid is the current bid.</span>
+                {% else %}
+                    <span style="color: green; display: none;" id="bid-status">Your bid is the current bid.</span>
+                {% endif %}
+             </p>
+            <input type="number" placeholder="Bid" id="bid-inp" min="{{ data.currentBid }}">
+            <button type="button" id="bid-btn">Place Bid</button> 
+            <script>
+                const bid_add_url = "/api/add/bid"; 
+                function addBid(url="", data={}){
+                    $.post(url, data);             
+                }
+                document.getElementById("bid-btn").addEventListener("click", function(){
+                    // get the value of the input box 
+                    var bidVal = document.getElementById("bid-inp").value; 
+                    var item_id = "{{ list_id }}"; 
+                    var curr_user = "{{ username }}"; 
+                    addBid(bid_add_url, {
+                        "csrfmiddlewaretoken": "{{ csrf_token }}", 
+                        "id" : item_id, 
+                        "user" : curr_user, 
+                        "bid" : bidVal
+                    });        
+                    // update view
+                    document.getElementById("currentBid").innerHTML = "$" + bidVal + ".0";  
+                    document.getElementById("bid-status").style.display = "inline-block"; 
+                    nBids++; 
+                    document.getElementById("nRecords").innerHTML = nBids; 
+                }); 
+            </script>
+
             <h3 style="margin-top: 20px;">Details</h3>
             <ul>
                 <li>Listed by: <a href="#">{{ username }}</a></li>
