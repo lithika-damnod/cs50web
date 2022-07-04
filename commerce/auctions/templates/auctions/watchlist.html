@@ -3,23 +3,41 @@
 
 {% block head %}
     <link href="{% static 'auctions/watchlist.css' %}" rel="stylesheet"> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 {% endblock %}
 
 {% block body %}
     <div class="list-container">
-        <div class="list-block">
-            <div class="menu">
-                <div class="delete-btn"></div>
-            </div>
-            <div class="content">
-                <div class="col-1">
-                    <div class="title">I'm a bit crazy right now</div>
-                    <div class="current-bid">$100.00</div>
+        {% for watch in watchlisted %}
+            <div class="list-block">
+                <div class="menu">
+                    <div class="delete-btn" data-id="{{ watch.id }}" onclick="deleteRecord('{{ watch.id }} ')"></div>
                 </div>
-                <div class="col-2">
-
-                </div>
-            </div>
-        </div>        
+                <a href="{% url 'displayListings' id=watch.id %}" style="color: black; text-decoration: none; ">       
+                    <div>
+                        <p class="price-tag">${{ watch.currentBid }}</p>
+                        <p class="title">{{ watch.title }}</p>
+                    </div>
+                </a>
+            </div>      
+        {% endfor %}
     </div>
+    <script> 
+        function addWatchList(url="", data={}){
+            $.post(url, data);             
+        }
+        function deleteRecord(item_id){
+            // send post request
+            console.log("deleting..!"); 
+            const api_url = "/api/remove/watchlist"; 
+            var curr_user = "{{ user }}"; 
+            console.log(curr_user); 
+            addWatchList(api_url, {
+                "csrfmiddlewaretoken": "{{ csrf_token }}", 
+                "id" : item_id, 
+                "user" : curr_user
+            });
+            location.reload(); 
+        }
+    </script> 
 {% endblock %}

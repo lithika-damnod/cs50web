@@ -75,13 +75,14 @@ def display_listings(request, id):
         data = Listing.objects.get(id=id)
         # get the usernamem of the bid conductor 
         username = User.objects.get(username=data.creator) 
+        watchingUser = User.objects.get(id=request.user.id)
         # add watcher :TODO (NOT TESTED) 
         try:
-            viewer = User.objects.get(id=request.user.id)
-        except User.DoesNotExist:  
+            viewer = Listing.objects.get(id=id, watchers=watchingUser) 
+        except Listing.DoesNotExist:  
             # add new watcher 
             update_object = Listing.objects.get(id=id)
-            update_object.watchers.add(viewer)
+            update_object.watchers.add(watchingUser)
             update_object.save()
 
         # get the auction object
@@ -89,11 +90,19 @@ def display_listings(request, id):
         # search for comments for the viewing listing
         all_comments = Comment.objects.filter(auction=auction_object)
 
+        watchListed=True 
+        # check whether watchlisted
+        try: 
+            watchListStatus = Listing.objects.get(id=id, watchList=watchingUser)
+        except Listing.DoesNotExist: 
+            watchListed=False 
+
         return render(request, "auctions/listings.html", {
             "list_id": id, 
             "data": data, 
-            "username": username, 
-            "comments": all_comments
+            "username": watchingUser, 
+            "comments": all_comments, 
+            "watchListed" : watchListed
         })
 
 def createListing(request): 
@@ -138,7 +147,12 @@ def createListing(request):
         })
 
 def showWatchList(request):
-    return render(request, "auctions/watchlist.html")
+    watchingUser = User.objects.get(id=request.user.id)
+    all_watchlisted = Listing.objects.filter(watchList=watchingUser)
+    return render(request, "auctions/watchlist.html", {
+        "watchlisted" : all_watchlisted, 
+        "user" : watchingUser
+    })
 
 # API Calls 
 def addComment(request): 
@@ -171,3 +185,41 @@ def listDownCats(request, id):
         "id" : id, 
         "results": results  
     })
+
+def addWatchList(request): 
+    if request.method == "POST":
+        item_id = request.POST["id"] 
+        user = request.POST["user"]
+
+        user_profile = User.objects.get(username=user)
+        item_profile = Listing.objects.get(id=item_id)  
+        item_profile.watchList.add(user_profile)
+
+        return JsonResponse({
+            "status":"success" 
+        }, status=200)
+    else:
+        return JsonResponse({
+            "error":"method not allowed", 
+            "allowed":["POST"]
+        }, status=405)
+
+
+def removeWatchList(request): 
+    if request.method == "POST":
+        item_id = request.POST["id"] 
+        user = request.POST["user"]
+
+        user_profile = User.objects.get(username=user)
+        item_profile = Listing.objects.get(id=item_id)  
+        item_profile.watchList.remove(user_profile)
+        item_profile.save()
+
+        return JsonResponse({
+            "status":"success" 
+        }, status=200)
+    else:
+        return JsonResponse({
+            "error":"method not allowed", 
+            "allowed":["POST"]
+        }, status=405)

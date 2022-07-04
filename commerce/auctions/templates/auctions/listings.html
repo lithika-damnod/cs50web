@@ -3,10 +3,53 @@
 
 {% block head %}
     <link href="{% static 'auctions/listings.css' %}" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 {% endblock %}
 
 {% block body %}
     <h2 style="margin-bottom: 20px;">Listings: {{ data.title }} </h2>
+    {% if not watchListed %}
+        <button type="btn" class="btn btn-dark" style="margin-bottom: 20px; font-size: 0.9em;" id="not-watched">add to watchlist</button>
+        <button type="btn" class="btn btn-danger" style="margin-bottom: 20px; font-size: 0.9em; display: none; " id="watched">remove from watchlist</button>
+    {% else %}
+        <button type="btn" class="btn btn-danger" style="margin-bottom: 20px; font-size: 0.9em;" id="watched">remove from watchlist</button>
+        <button type="btn" class="btn btn-dark" style="margin-bottom: 20px; font-size: 0.9em; display: none; " id="not-watched">add to watchlist</button>
+    {% endif %}
+
+    <script> 
+
+        function addWatchList(url="", data={}){
+            $.post(url, data);             
+        }
+
+        document.getElementById("not-watched").addEventListener("click", function(){
+            document.getElementById("not-watched").style.display="none"; 
+            document.getElementById("watched").style.display="block"; 
+            // send post request
+            const api_url = "/api/add/watchlist"; 
+            var item_id = "{{ list_id }}"; 
+            var curr_user = "{{ username }}"; 
+            addWatchList(api_url, {
+                "csrfmiddlewaretoken": "{{ csrf_token }}", 
+                "id" : item_id, 
+                "user" : curr_user
+            }); 
+        });
+        document.getElementById("watched").addEventListener("click", function(){
+            document.getElementById("not-watched").style.display="block"; 
+            document.getElementById("watched").style.display="none"; 
+            // send post request
+            const api_url = "/api/remove/watchlist"; 
+            var item_id = "{{ list_id }}"; 
+            var curr_user = "{{ username }}"; 
+            addWatchList(api_url, {
+                "csrfmiddlewaretoken": "{{ csrf_token }}", 
+                "id" : item_id, 
+                "user" : curr_user
+            });
+         });
+    </script> 
+
     <div class="listing-data">
         <div class="tags"></div>
         <img src="{{ data.pic_url }}">

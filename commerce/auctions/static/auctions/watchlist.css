@@ -1,16 +1,16 @@
 .list-container{
     display: flex;
     width: 100%; 
-    flex-direction: column; 
-    align-items: center; 
+    justify-content: center;
 }
 .list-block{
     display: block;
-    width: 80%; 
-    height: 200px;
+    min-width: 250px; 
     background-color: rgb(231, 245, 221); 
     border-radius: 6px; 
     margin: 10px; 
+    padding: 10px; 
+    cursor: pointer;  
 }
 .list-block .menu{
     display: flex; 
@@ -27,18 +27,9 @@
     background-color: red; 
     cursor: pointer; 
 }
-.list-block .content{
-    display: flex; 
-    width: 100%; 
-    justify-content: space-between; 
+.list-block .price-tag{
+    font-size: 4em; 
 }
-.list-block .col-1{
-    display: block;
-    width: 60%; 
-    background-color: red; 
-}
-.list-block .col-2{
-    display: block; 
-    width: 40%; 
-    background-color: yellow; 
+.list-block .title{
+    font-size: 1.5em; 
 }

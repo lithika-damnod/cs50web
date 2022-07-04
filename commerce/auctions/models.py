@@ -22,6 +22,7 @@ class Listing(models.Model):
     creator = models.ForeignKey(User, on_delete=models.PROTECT, related_name="creator")
     watchers = models.ManyToManyField(User, blank=True, related_name="watched_ppl")
     buyer = models.ManyToManyField(User, blank=True, related_name="buyers")
+    watchList = models.ManyToManyField(User, blank=True, related_name="watchlist")
 
     def __str__(self):
         return f"title: {self.title} Starting Bid: {self.startingBid}"
@@ -39,4 +40,4 @@ class Comment(models.Model):
     created_date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f"auction: {self.auction} user: {self.user} \n description: {self.comment}"
+        return f"auction: {self.auction} user: {self.user} \n description: {self.comment}" 
