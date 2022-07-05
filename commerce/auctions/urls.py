@@ -15,5 +15,6 @@ urlpatterns = [
     path("api/add/comment", views.addComment, name="addComment"), 
     path("api/add/watchlist", views.addWatchList, name="addWatchList"), 
     path("api/remove/watchlist", views.removeWatchList, name="removeWatchList"), 
-    path("api/add/bid", views.addBid, name="newBid")
+    path("api/add/bid", views.addBid, name="newBid"), 
+    path("api/close/bid", views.closeBidding, name="closeBidding")
 ]

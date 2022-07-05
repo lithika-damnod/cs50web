@@ -23,6 +23,7 @@ class Listing(models.Model):
     watchers = models.ManyToManyField(User, blank=True, related_name="watched_ppl")
     buyer = models.ManyToManyField(User, blank=True, related_name="buyers")
     watchList = models.ManyToManyField(User, blank=True, related_name="watchlist")
+    closed = models.BooleanField(default=False)
 
     def __str__(self):
         return f"title: {self.title} Starting Bid: {self.startingBid}"

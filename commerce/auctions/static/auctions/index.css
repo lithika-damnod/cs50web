@@ -43,7 +43,23 @@
     position: absolute; 
     left: 0; 
     bottom: 0;  
-    color: black;
+    color: white;
+    background-color: black; 
+    opacity: 60%; 
+}
+.product-data:hover{
+    animation-name: fade-out; 
+    animation-duration: 2s;
+    animation-fill-mode: both;
+}
+
+@keyframes fade-out{
+    from{
+        opacity: 60%; 
+    }
+    to{
+        opacity: 0%; 
+    }
 }
 
 

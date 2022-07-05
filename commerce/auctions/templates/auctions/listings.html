@@ -11,12 +11,14 @@
 
 {% block body %}
     <h2 style="margin-bottom: 20px;">Listings: {{ data.title }} </h2>
-    {% if not watchListed %}
-        <button type="btn" class="btn btn-dark" style="margin-bottom: 20px; font-size: 0.9em;" id="not-watched">add to watchlist</button>
-        <button type="btn" class="btn btn-danger" style="margin-bottom: 20px; font-size: 0.9em; display: none; " id="watched">remove from watchlist</button>
-    {% else %}
-        <button type="btn" class="btn btn-danger" style="margin-bottom: 20px; font-size: 0.9em;" id="watched">remove from watchlist</button>
-        <button type="btn" class="btn btn-dark" style="margin-bottom: 20px; font-size: 0.9em; display: none; " id="not-watched">add to watchlist</button>
+    {% if signedIn %}
+        {% if not watchListed %}
+            <button type="btn" class="btn btn-dark" style="margin-bottom: 20px; font-size: 0.9em;" id="not-watched">add to watchlist</button>
+            <button type="btn" class="btn btn-danger" style="margin-bottom: 20px; font-size: 0.9em; display: none; " id="watched">remove from watchlist</button>
+        {% else %}
+            <button type="btn" class="btn btn-danger" style="margin-bottom: 20px; font-size: 0.9em;" id="watched">remove from watchlist</button>
+            <button type="btn" class="btn btn-dark" style="margin-bottom: 20px; font-size: 0.9em; display: none; " id="not-watched">add to watchlist</button>
+        {% endif %}
     {% endif %}
 
     <script> 
@@ -58,14 +60,36 @@
         <img src="{{ data.pic_url }}">
         <div class="data">
             <h4>{{ data.title }}</h4>
+            {% if isOwner %}
+                {% if biddingClosed == False %}
+                    <img src="{% static 'images/stop.png' %}" style="width: 40px; cursor: pointer;" id="bid-close-btn"/>
+                {% endif %}
+            {% endif %}
+            <script>
+                var item_id = "{{ list_id }}"; 
+                function closeBidding(url="", data={}){
+                    $.post(url, data);             
+                }
+                document.getElementById("bid-close-btn").addEventListener("click", function(){
+                    var close_bid_url = "/api/close/bid"; 
+                    document.getElementById("bid-close-btn").style.display="none"; 
+                    closeBidding(close_bid_url, {
+                        "csrfmiddlewaretoken": "{{ csrf_token }}", 
+                        "id" : item_id
+                    }); 
+                }); 
+            </script>
             <h2 id="currentBid">${{ data.currentBid }}</h2>
             <p><span id="nRecords">{{ nBids }}</span> bid(s) so far. 
-                {% if currentBidYours %}
-                    <span style="color: green;" id="bid-status">Your bid is the current bid.</span>
+                {% if currentBidYours and biddingClosed %}
+                    <span style="color: green;" id="bid-status">You won the bid 🥂 </span>
+                {% elif currentBidYours %} 
+                    <span style="color: green;" id="bid-status">Your bid is the current bid 👍 </span>
                 {% else %}
-                    <span style="color: green; display: none;" id="bid-status">Your bid is the current bid.</span>
+                    <span style="color: green; display: none;" id="bid-status">Your bid is the current bid 👍 </span>
                 {% endif %}
              </p>
+            {% if signedIn and not biddingClosed %}
             <input type="number" placeholder="Bid" id="bid-inp" min="{{ data.currentBid }}">
             <button type="button" id="bid-btn">Place Bid</button> 
             <script>
@@ -91,12 +115,13 @@
                     document.getElementById("nRecords").innerHTML = nBids; 
                 }); 
             </script>
-
+            {% endif %}
             <h3 style="margin-top: 20px;">Details</h3>
             <ul>
                 <li>Listed by: <a href="#">{{ username }}</a></li>
                 <li>Description: {{ data.description }}</li>
             </ul>
+            {% if signedIn %}
             <div class="comment-space">
                 <div class="comment-input form-group">
                     <form action="/api/add/comment" method="post">
@@ -120,6 +145,7 @@
                     </div> 
                 {% endfor %}
             </div>
+            {% endif %}
         </div>
     </div>
     

@@ -8,14 +8,6 @@
 {% block body %}
     <h2> Active Listing </h2>
     <div class="product-container">
-        <div class="product-box">
-            <img src="https://images.unsplash.com/photo-1569770218135-bea267ed7e84?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bWFjYm9vayUyMHByb3xlbnwwfHwwfHw%3D&w=1000&q=80" class="product-img">
-            <div class="product-data">
-                <h4 class="product-title">Invisibility Cloak </h4>
-                <h5 class="product-price"><b>Price: </b> $70.00</h5>
-                <p class="product-date">Created Feb, 22, 2020, 6.55 p.m</p>
-            </div>
-        </div>
         {% for entry in entries %}
             <a href="{% url 'displayListings' id=entry.id %}" class="product-link">
                 <div class="product-box" href="#">

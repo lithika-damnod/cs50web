@@ -71,12 +71,17 @@ def display_listings(request, id):
     if request.method == "POST":
         pass
     else:
+        # check whether the user has signed in or not
+        signedIn = False
+        if request.user.is_authenticated:
+            signedIn = True 
         # get data for the corresponding id
         data = Listing.objects.get(id=id)
         # get the usernamem of the bid conductor 
         username = User.objects.get(username=data.creator) 
-        watchingUser = User.objects.get(id=request.user.id)
-        # add watcher :TODO (NOT TESTED) 
+        watchingUser = None; 
+        if signedIn: 
+            watchingUser = User.objects.get(id=request.user.id)
         try:
             viewer = Listing.objects.get(id=id, watchers=watchingUser) 
         except Listing.DoesNotExist:  
@@ -106,6 +111,13 @@ def display_listings(request, id):
             currentBidYours = False
         
         nBids = Bid.objects.filter(auction=auction_object).count() 
+        isOwner = False
+        ownerObject = Listing.objects.get(id=id).creator
+        if signedIn and watchingUser == ownerObject: 
+            isOwner = True  
+            
+        biddingClosed = auction_object.closed
+        print(f"bidding closed: {biddingClosed}")
         return render(request, "auctions/listings.html", {
             "list_id": id, 
             "data": data, 
@@ -113,7 +125,10 @@ def display_listings(request, id):
             "comments": all_comments, 
             "watchListed" : watchListed, 
             "currentBidYours" : currentBidYours, 
-            "nBids": nBids
+            "nBids": nBids, 
+            "signedIn" : signedIn, 
+            "isOwner" : isOwner, 
+            "biddingClosed" : biddingClosed
         })
 
 def createListing(request): 
@@ -143,7 +158,9 @@ def createListing(request):
         newEntry.save()
         # add Each category to newEntry
         for c in cats: 
-            newEntry.category.add(c) 
+            # get the category object
+            category_object = Category.objects.get(id=c)
+            newEntry.category.add(category_object) 
 
         newEntry.save() 
 
@@ -192,6 +209,7 @@ def showCats(request):
 def listDownCats(request, id):
     cat_object = Category.objects.get(category=id)
     results = Listing.objects.filter(category=cat_object)
+    print(f"nResults: {len(results)}")
     return render(request, "auctions/listCats.html", {
         "id" : id, 
         "results": results  
@@ -255,3 +273,19 @@ def addBid(request):
             "error":"method not allowed", 
             "allowed":["POST"]
         }, status=405)
+
+def closeBidding(request): 
+    if request.method == "POST": 
+        post_listing_id = request.POST["id"]
+        auction_object = Listing.objects.get(id=post_listing_id)
+        auction_object.closed = True
+        auction_object.save()
+        return JsonResponse({
+            "status" : "success"
+        }) 
+    else:
+        return JsonResponse({
+            "error":"method not allowed", 
+            "allowed":["POST"]
+        }, status=405) 
+        
