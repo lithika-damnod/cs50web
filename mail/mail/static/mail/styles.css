@@ -1,3 +1,40 @@
 textarea {
     min-height: 400px;
 }
+.email-list { 
+    display: block; 
+    min-width: calc(100vw - 25vw); 
+    height: auto; 
+    box-sizing: border-box;
+    padding: 10px; 
+}
+.email-card { 
+    display: flex; 
+    height: auto; 
+    width: 100%; 
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(208, 230, 233, 0.564); 
+    border-radius: 10px; 
+    margin-bottom: 10px; 
+    transition: all 0.3s ease-in-out;
+    cursor: pointer; 
+    box-sizing: border-box;
+    padding: 0.8rem; 
+}
+.email-card:hover{  
+    transform: scale(1.05); 
+    transition: all 0.3s; 
+    transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+.email-card p {
+    margin: 0; 
+}
+.email-card .email-card-header{ 
+    display: flex; 
+    justify-content: space-evenly;
+    align-items: center;
+    margin: 0; 
+}
+.email-card .email-card-header * { margin: 0; margin-right: 1rem }
+.email-card .email-card-header .email-subject { font-weight: bold; }
