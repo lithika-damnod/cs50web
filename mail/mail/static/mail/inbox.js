@@ -111,7 +111,7 @@ function load_mailbox(mailbox) {
 
 function send_email() {
   const recepient = document.getElementById("compose-recipients").value;
-  // const recepients = recepientStr.split(""); 
+  // const recepients = recepientStr.split(","); 
   const subject = document.getElementById("compose-subject").value;
   const body = document.getElementById("compose-body").value; 
   // send email 
@@ -123,8 +123,7 @@ function send_email() {
         body: body
     })
   })
-  .then(response => response.json())
-  .then(result => {
+  .then(() => {
       load_mailbox("sent"); 
   });
 }
