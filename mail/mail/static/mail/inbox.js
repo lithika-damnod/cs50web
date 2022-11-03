@@ -40,8 +40,9 @@ function load_mailbox(mailbox) {
       .then(emails => {
         // render received emails
         for(const email in emails) { 
+          console.log(emails[email].read);
           document.querySelector(".email-list").innerHTML += `
-            <div class="email-card" onclick="load_full_email(${emails[email].id})" >
+            <div class="email-card" onclick="load_full_email(${emails[email].id})">
                 <div class="email-card-header">
                     <h5 class="email-address">
                         ${emails[email].sender}
@@ -130,6 +131,14 @@ function send_email() {
 
 function load_full_email(target) { 
   document.querySelector('#emails-view').style.display = "none";
+  // update viewing
+  fetch(`/emails/${target}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+        viewed: true
+    })
+  })
+
   // fetch corresponding data from api 
   fetch(`/emails/${target}`)
     .then(response => response.json())
@@ -155,8 +164,8 @@ function load_full_email(target) {
                 ${email.timestamp}
             </p>  
             <div class="email-view-btns">
-                <button class="btn btn-sm btn-outline-dark" id="reply-btn">Reply</button>
-                <button class="btn btn-sm btn-outline-dark" id="archive-btn">Archive</button>
+                <button class="btn btn-sm btn-outline-dark" id="reply-btn" onclick="handleReplying('${email.sender}', '${email.subject}', '${email.timestamp}', '${email.body}')">Reply</button>
+                <button class="btn btn-sm btn-outline-dark" id="archive-btn" onclick="toggleArchive(${email.id}, ${email.archived})"> ${ (email.archived)?"Unarchive":"Archive"} </button>
             </div>
             <hr />
             <h6>
@@ -165,4 +174,41 @@ function load_full_email(target) {
         </div>
       `; 
     });
+}
+
+function handleReplying(sender_email, subject, timestamp, body) { 
+  compose_email(); 
+  // set the value of recipient 
+  document.getElementById("compose-recipients").value = sender_email; 
+  // set the value for subject 
+  document.getElementById("compose-subject").value = `Re: ${subject}`;
+  // set the initial body text
+  document.getElementById("compose-body").value = `On ${timestamp} ${sender_email} wrote: 
+    ${body} 
+  `;
+}
+
+function toggleArchive(target, status) {
+  if (!status) {
+    fetch(`/emails/${target}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+          archived: true
+      })
+    }).then (()  => {
+        load_mailbox("archive"); 
+      }
+    )
+  } 
+  else { 
+    fetch(`/emails/${target}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+          archived: false
+      })
+    }).then (()  => {
+        load_mailbox("inbox"); 
+      }
+    )
+  }
 }
