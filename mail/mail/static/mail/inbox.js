@@ -41,7 +41,7 @@ function load_mailbox(mailbox) {
         // render received emails
         for(const email in emails) { 
           document.querySelector(".email-list").innerHTML += `
-            <div class="email-card">
+            <div class="email-card" onclick="load_full_email(${emails[email].id})" >
                 <div class="email-card-header">
                     <h5 class="email-address">
                         ${emails[email].sender}
@@ -65,7 +65,7 @@ function load_mailbox(mailbox) {
         // render received emails
         for(const email in emails) { 
           document.querySelector(".email-list").innerHTML += `
-            <div class="email-card">
+            <div class="email-card" onclick="load_full_email(${emails[email].id})" >
                 <div class="email-card-header">
                     <h5 class="email-address">
                         ${emails[email].recipients[0]}
@@ -89,7 +89,7 @@ function load_mailbox(mailbox) {
         // render received emails
         for(const email in emails) { 
           document.querySelector(".email-list").innerHTML += `
-            <div class="email-card">
+            <div class="email-card" onclick="load_full_email(${emails[email].id})" >
                 <div class="email-card-header">
                     <h5 class="email-address">
                         ${emails[email].recipients[0]}
@@ -126,4 +126,43 @@ function send_email() {
   .then(result => {
       load_mailbox("sent"); 
   });
+}
+
+function load_full_email(target) { 
+  document.querySelector('#emails-view').style.display = "none";
+  // fetch corresponding data from api 
+  fetch(`/emails/${target}`)
+    .then(response => response.json())
+    .then(email => {
+      // render the component
+      document.querySelector(".email-list").innerHTML = `
+        <div class="email-full-data">
+            <hr />
+            <p>
+                <span style="font-weight: bolder">From: </span>   
+                ${email.sender}
+            </p>  
+            <p>
+                <span style="font-weight: bolder">To: </span>   
+                ${email.recipients[0]}
+            </p>  
+            <p>
+                <span style="font-weight: bolder">Subject: </span>   
+                ${email.subject}
+            </p>  
+            <p>
+                <span style="font-weight: bolder">Timestamp: </span>   
+                ${email.timestamp}
+            </p>  
+            <div class="email-view-btns">
+                <button class="btn btn-sm btn-outline-dark" id="reply-btn">Reply</button>
+                <button class="btn btn-sm btn-outline-dark" id="archive-btn">Archive</button>
+            </div>
+            <hr />
+            <h6>
+              ${email.body}
+            </h6>
+        </div>
+      `; 
+    });
 }
