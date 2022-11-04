@@ -118,14 +118,15 @@ function send_email() {
   fetch('/emails', {
     method: 'POST',
     body: JSON.stringify({
-        recipients: recepients.replace(" ", "").split(","),
+        recipients: recepients,
         subject: subject,
         body: body
     })
   })
-  .then(() => {
+  .then(response => response.json())
+  .then(result => {
       load_mailbox("sent"); 
-  });
+  })
 }
 
 function load_full_email(target) { 
