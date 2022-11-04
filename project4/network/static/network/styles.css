@@ -96,3 +96,14 @@
 .post .column-3 .react-btns * { 
     margin-right: 1.1rem; 
 }
+
+/* heart interaction classes */
+.liked { 
+    color: rgba(255, 0, 0, 0.812); 
+    transform: scale(1.2); 
+    transition: all 0.5s cubic-bezier(1, 0, 0, 1)
+}
+.disliked { 
+    color: rgb(68, 68, 68);
+    transition: all 0.5s cubic-bezier(1, 0, 0, 1)
+}
