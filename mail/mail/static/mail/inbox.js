@@ -93,7 +93,7 @@ function load_mailbox(mailbox) {
             <div class="email-card" onclick="load_full_email(${emails[email].id})" >
                 <div class="email-card-header">
                     <h5 class="email-address">
-                        ${emails[email].recipients[0]}
+                        ${emails[email].recipient[0]}
                     </h5>
                     <h5 class="email-subject">
                         ${emails[email]["subject"]}
@@ -110,7 +110,7 @@ function load_mailbox(mailbox) {
 }
 
 function send_email() {
-  const recepient = document.getElementById("compose-recipients").value;
+  const recepients = document.getElementById("compose-recipients").value;
   // const recepients = recepientStr.split(","); 
   const subject = document.getElementById("compose-subject").value;
   const body = document.getElementById("compose-body").value; 
@@ -118,7 +118,7 @@ function send_email() {
   fetch('/emails', {
     method: 'POST',
     body: JSON.stringify({
-        recipients: recepient,
+        recipients: recepients.replace(" ", "").split(","),
         subject: subject,
         body: body
     })
@@ -142,6 +142,7 @@ function load_full_email(target) {
   fetch(`/emails/${target}`)
     .then(response => response.json())
     .then(email => {
+      console.log(email.recipients)
       // render the component
       document.querySelector(".email-list").innerHTML = `
         <div class="email-full-data">
@@ -152,7 +153,7 @@ function load_full_email(target) {
             </p>  
             <p>
                 <span style="font-weight: bolder">To: </span>   
-                ${email.recipients[0]}
+                ${email.recipients}
             </p>  
             <p>
                 <span style="font-weight: bolder">Subject: </span>   
