@@ -42,7 +42,9 @@ function load_mailbox(mailbox) {
         for(const email in emails) { 
           console.log(emails[email].read);
           document.querySelector(".email-list").innerHTML += `
-            <div class="email-card" onclick="load_full_email(${emails[email].id})">
+            <div class="email-card" onclick="load_full_email(${emails[email].id})" 
+              style="background-color: ${(emails[email].read === false)?"rgba(218, 208, 233, 0.564)":"rgba(208, 230, 233, 0.564)"}"
+            >
                 <div class="email-card-header">
                     <h5 class="email-address">
                         ${emails[email].sender}
@@ -131,13 +133,14 @@ function send_email() {
 
 function load_full_email(target) { 
   document.querySelector('#emails-view').style.display = "none";
+
   // update viewing
   fetch(`/emails/${target}`, {
     method: 'PUT',
     body: JSON.stringify({
-        viewed: true
+        read: true
     })
-  })
+  }) 
 
   // fetch corresponding data from api 
   fetch(`/emails/${target}`)
