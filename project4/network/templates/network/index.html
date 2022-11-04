@@ -1,5 +1,40 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    TODO
+    <div class="create-post-wrapper">
+        <h5 style="margin-left: 1rem">Create Post ✍️ </h5>
+        <div class="create-post-frame">
+            <div class="form-group">
+                <textarea class="form-control" id="exampleFormControlTextarea3" rows="7"></textarea>
+            </div>
+        </div>
+        <button type="button" class="btn btn-secondary" style="margin-left: 1rem">Post</button>
+    </div>
+    <div class="page-title" style="margin-left: 1rem">
+        <h1>All Posts</h1>
+    </div>
+    <div class="posts-wrapper">
+        <div class="post">
+            <div class="column-1">
+                <h5>Foo</h5> 
+                <span id="pencil-icon">
+                    <i class="fa-sharp fa-solid fa-pen" id="edit-icon" style="color: green; margin: 0.3rem;"></i>
+                </span>
+            </div>
+            <div class="column-2">
+                <h4>
+                    Hello Dudes! .. 🎉 Hello Dudes! .. 🎉 Hello Dudes! .. 🎉 Hello Dudes! .. 🎉 
+                </h4>
+            </div>
+            <div class="column-3">
+                <p>
+                    March 29, 2020, 11:40 PM
+                </p>
+                <div class="react-btns">   
+                    <i class="fa-sharp fa-solid fa-heart"></i>
+                    <i class="fa-sharp fa-solid fa-comment"></i>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
