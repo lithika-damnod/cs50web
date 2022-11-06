@@ -5,10 +5,10 @@
         <h5 style="margin-left: 1rem">Create Post ✍️ </h5>
         <div class="create-post-frame">
             <div class="form-group">
-                <textarea class="form-control" id="exampleFormControlTextarea3" rows="7"></textarea>
+                <textarea class="form-control" id="newPostContent" rows="7"></textarea>
             </div>
         </div>
-        <button type="button" class="btn btn-secondary" style="margin-left: 1rem">Post</button>
+        <button type="button" class="btn btn-secondary" style="margin-left: 1rem" onclick="createPost()">Post</button>
     </div>
     <div class="page-title" style="margin-left: 1rem">
         <h1>All Posts</h1>
@@ -16,7 +16,7 @@
     <div class="posts-wrapper">
         <div class="post">
             <div class="column-1">
-                <h5>Foo</h5> 
+                <h5 onclick="showProfileInfo()">Foo</h5> 
                 <span id="pencil-icon">
                     <i class="fa-sharp fa-solid fa-pen" id="edit-icon" style="color: rgba(6, 130, 6, 0.401); margin: 0.3rem;"></i>
                 </span>
@@ -59,7 +59,37 @@
                 </div>
             </div>
         </div>
+    </div>
 
 
+    <div class="profile-info-wrapper">
+        <div class="main-wrapper">
+            <h3>lithika-damnod</h3>
+            <button type="button" class="btn btn-secondary">Follow</button>
+            <div class="posts-container">
+                <div class="post" style="width: 50vw">
+                    <div class="column-1">
+                        <h5>Foo</h5> 
+                        <span id="pencil-icon">
+                            <i class="fa-sharp fa-solid fa-pen" id="edit-icon" style="color: rgba(6, 130, 6, 0.401); margin: 0.3rem;"></i>
+                        </span>
+                    </div>
+                    <div class="column-2">
+                        <h4>
+                            Hello Dudes! .. 🎉 Hello Dudes! .. 🎉 Hello Dudes! .. 🎉 Hello Dudes! .. 🎉 
+                        </h4>
+                    </div>
+                    <div class="column-3">
+                        <p>
+                            March 29, 2020, 11:40 PM
+                        </p>
+                        <div class="react-btns">   
+                            <i class="fa-sharp fa-solid fa-heart" onclick="triggerHeartReactions(event)" ></i>
+                            <i class="fa-sharp fa-solid fa-comment"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
