@@ -134,3 +134,6 @@
 .posts-container { 
     margin-top: 1rem; 
 }
+.editPanel { 
+    display: none; 
+}

@@ -10,7 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     posted_time = serializers.DateTimeField(format="%b %d %Y, %I:%M %p")
-    creator = serializers.StringRelatedField(read_only=True)
+    creator = UserSerializer()
 
     class Meta: 
         model = Post
