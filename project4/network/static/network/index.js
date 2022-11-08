@@ -90,9 +90,9 @@ function loadPosts() {
                                 ${posts[post]["content"]}
                             </h4>
                             <div class="form-group editPanel">
-                                <input type="text" class="form-control" id="newPostContent" value=${posts[post]["content"]}>
+                                <input type="text" class="form-control newPostContent" value="lithika">
                                 <small id="editHelp" class="form-text text-muted">click on <b>update</b> to change post content</small>
-                                <button type="submit" class="btn btn-dark" style="margin-top: 1rem" >Update</button>
+                                <button type="submit" class="btn btn-dark" style="margin-top: 1rem" onclick="updateContent(event, ${posts[post]["post_id"]})">Update</button>
                           </div> 
                         </div>
                         <div class="column-3">
@@ -111,7 +111,39 @@ function loadPosts() {
 }
 
 function triggerPostEditPanel(event) { 
-    console.log(event); 
-    document.querySelector(".post-content-text").style.display = "none";
-    document.querySelector(".editPanel").style.display = "block";
+    event.currentTarget.parentNode.parentNode.querySelector(".post-content-text").style.display = "none";
+    event.currentTarget.parentNode.parentNode.querySelector(".editPanel").style.display = "block";
+    event.currentTarget.parentNode.parentNode.querySelector(".newPostContent").value = event.currentTarget.parentNode.parentNode.querySelector(".post-content-text").innerHTML.trim();
+}
+
+function handleFollowing() {
+    let current_btn_state = document.querySelector(".follow-btn").innerHTML; 
+    if( current_btn_state === "Follow") {
+        document.querySelector(".follow-btn").innerHTML = "Unfollow"; 
+        document.querySelector(".follow-btn").classList.remove("btn-secondary"); 
+        document.querySelector(".follow-btn").classList.add("btn-danger"); 
+    }
+    else { 
+        document.querySelector(".follow-btn").innerHTML = "Follow"; 
+        document.querySelector(".follow-btn").classList.remove("btn-danger"); 
+        document.querySelector(".follow-btn").classList.add("btn-secondary"); 
+    }
+}
+
+function updateContent(event, post_id) { 
+    var new_content = event.currentTarget.parentNode.parentNode.querySelector(".newPostContent").value; 
+    var content_elem = event.currentTarget.parentNode.parentNode.querySelector(".post-content-text"); 
+    var editPanel = event.currentTarget.parentNode.parentNode.parentNode.querySelector(".editPanel");
+
+    event.currentTarget.parentNode.parentNode.querySelector(".newPostContent").value = event.currentTarget.parentNode.parentNode.querySelector(".post-content-text").innerHTML.trim();
+
+    // fetch an PUT
+    axios.put(`/api/post/${post_id}`, { "content": new_content }, { 
+        headers: {'X-CSRFToken': csrf_token}
+    }).then(response => {
+        // backup view
+        content_elem.innerHTML = new_content; 
+        content_elem.style.display = "block";
+        editPanel.style.display = "none";
+    })
 }
