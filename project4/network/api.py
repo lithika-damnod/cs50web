@@ -82,6 +82,55 @@ def single_post(request, post_id):
             "status": "success"
         })
 
+@api_view(['GET', 'PUT'])
+def like_status(request, post_id): 
+    if not request.user.is_authenticated: 
+        return JsonResponse({
+            "error": "unauthorized"
+        }, status=401)
+
+    if request.method == "GET": 
+        try: 
+            post_obj = Post.objects.get(post_id=post_id)
+        except Post.DoesNotExist:
+            return Response({
+                "status": "error", 
+                "error": "post not found"
+            }, status=404)
+
+        try: 
+            likers = post_obj.likers.get(username=request.user)
+        except User.DoesNotExist:
+            return Response({
+                "status": False 
+            })
+        return Response({
+            "status": True
+        })
+    else: 
+        try: 
+            post_obj = Post.objects.get(post_id=post_id) 
+        except Post.DoesNotExist:
+            return Response({"error": "post not found"}, status=404)
+
+        # trigger true and false.. initially true
+        try: 
+            liker = post_obj.likers.get(username=request.user) 
+        except User.DoesNotExist:
+            post_obj.likers.add(request.user)
+            post_obj.save()
+            return Response({
+                "status": True
+            }) 
+
+        # if the liker is already in it 
+        post_obj.likers.remove(request.user)
+        post_obj.save()
+        return Response({
+            "status": False
+        })
+
+
 @api_view(['GET'])
 def all_posts(request): 
     all_posts = Post.objects.all().order_by("-posted_time")
