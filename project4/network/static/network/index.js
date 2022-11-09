@@ -2,15 +2,23 @@
 loadPosts(); 
 
 
-function triggerHeartReactions(event) {
+function triggerHeartReactions(event, post_id) {
     const classList = event.target.classList; 
     if ( classList[3] === 'liked' ) {
         event.target.classList.add('disliked');
         event.target.classList.remove('liked'); 
+        // send PUT request to update like status -> false    
+        axios.put(`/api/post/${post_id}/liked`, {}, {  // send a blank put request, so it'll do the opposite of what it currently has in it's state
+            headers: {'X-CSRFToken': csrf_token}
+        })
     }
     else { 
         event.target.classList.add('liked');
         event.target.classList.remove('disliked'); 
+        // send PUT request to update like status -> true
+        axios.put(`/api/post/${post_id}/liked`, {}, {  // send a blank put request, so it'll do the opposite of what it currently has in it's state
+            headers: {'X-CSRFToken': csrf_token}
+        })
     }
 }
 
@@ -52,7 +60,7 @@ function showProfileInfo(user_id) {
                                 ${account_post_data[post]["posted_time"]}
                             </p>
                             <div class="react-btns">   
-                                <i class="fa-sharp fa-solid fa-heart" onclick="triggerHeartReactions(event)"></i>
+                                <i class="fa-sharp fa-solid fa-heart" onclick="triggerHeartReactions(event, ${account_post_data[post]["post_id"]})"></i>
                                 <i class="fa-sharp fa-solid fa-comment"></i>
                             </div>
                         </div>
@@ -85,7 +93,6 @@ function loadPosts() {
                             liked = true; 
                         }
                         else { liked = false; }
-                        console.log(liked, posts[post]["post_id"]);
                         document.querySelector(".posts-wrapper").innerHTML += `
                             <div class="post">
                                 <div class="column-1">
@@ -109,7 +116,7 @@ function loadPosts() {
                                         ${posts[post]["posted_time"]}
                                     </p>
                                     <div class="react-btns">   
-                                        ${liked ? `<i class="fa-sharp fa-solid fa-heart liked" onclick="triggerHeartReactions(event)"></i>` : `<i class="fa-sharp fa-solid fa-heart disliked" onclick="triggerHeartReactions(event)"></i>`}
+                                        ${liked ? `<i class="fa-sharp fa-solid fa-heart liked" onclick="triggerHeartReactions(event, ${posts[post]["post_id"]})"></i>` : `<i class="fa-sharp fa-solid fa-heart disliked" onclick="triggerHeartReactions(event, ${posts[post]["post_id"]})"></i>`}
                                         <i class="fa-sharp fa-solid fa-comment"></i>
                                     </div>
                                 </div>
