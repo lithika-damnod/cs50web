@@ -51,6 +51,14 @@ async function showProfileInfo(user_id, page=1) {
     // render components 
     document.getElementById("profile-info-username").innerHTML = account_data["username"];
     document.querySelector(".posts-container").innerHTML = ""; // clearing out all other components that might have existed before 
+    document.querySelector(".n-followers").innerHTML = `${account_data["n_followers"]}`; 
+    let isFollowingJson = await fetch(`/api/user/${user_id}/follow`).then(response => response.json()); 
+    let isFollowing = isFollowingJson["status"]; 
+    document.querySelector(".follow-btn-container").innerHTML = (isFollowing)?`
+        <button type="button" class="btn btn-danger follow-btn" onclick="handleFollowing(${account_data["id"]})">Unfollow</button>
+    `:`
+        <button type="button" class="btn btn-secondary follow-btn" onclick="handleFollowing(${account_data["id"]})">Follow</button>
+    `; 
     for(const post in account_post_data) {
         // fetch for like status  
         var liked = false; 
@@ -157,17 +165,31 @@ function triggerPostEditPanel(event) {
     event.currentTarget.parentNode.parentNode.querySelector(".newPostContent").value = event.currentTarget.parentNode.parentNode.querySelector(".post-content-text").innerHTML.trim();
 }
 
-function handleFollowing() {
+function handleFollowing(user_id) {
     let current_btn_state = document.querySelector(".follow-btn").innerHTML; 
     if( current_btn_state === "Follow") {
         document.querySelector(".follow-btn").innerHTML = "Unfollow"; 
         document.querySelector(".follow-btn").classList.remove("btn-secondary"); 
         document.querySelector(".follow-btn").classList.add("btn-danger"); 
+        // fake dom update
+        let curr_n_followers = parseInt(document.querySelector(".n-followers").innerHTML); 
+        document.querySelector(".n-followers").innerHTML = curr_n_followers + 1; 
+        // fetch update 
+        axios.put(`/api/user/${user_id}/follow`, {}, {  // send a blank put request, so it'll do the opposite of what it currently has in it's state
+            headers: {'X-CSRFToken': csrf_token}
+        })
     }
     else { 
         document.querySelector(".follow-btn").innerHTML = "Follow"; 
         document.querySelector(".follow-btn").classList.remove("btn-danger"); 
         document.querySelector(".follow-btn").classList.add("btn-secondary"); 
+        // fake dom update
+        let curr_n_followers = parseInt(document.querySelector(".n-followers").innerHTML); 
+        document.querySelector(".n-followers").innerHTML = curr_n_followers - 1; 
+        // fetch update 
+        axios.put(`/api/user/${user_id}/follow`, {}, {  // send a blank put request, so it'll do the opposite of what it currently has in it's state
+            headers: {'X-CSRFToken': csrf_token}
+        })
     }
 }
 
@@ -224,3 +246,67 @@ function load_profile_post_paginator(user_id, total, current, prev, next, compon
         </ul>
     `
 } 
+function following_post_paginator(total, current, prev, next, component) {  
+    let page_li = ""; 
+    for(var i=1; i<=total; i++) { 
+        page_li += `<li class="page-item ${(i === current)?'active':''}" onclick="load_following_posts(${i})"><a class="page-link">${i}</a></li>`
+    }
+    component.innerHTML = `
+        <ul class="pagination" style="margin-left: 3rem;">
+            <li class="page-item ${(prev)?``:`disabled`}" onclick="load_following_posts(${current-1})">
+                <a class="page-link" tabindex="-1">Previous</a>
+            </li>
+            ${ page_li }
+            <li class="page-item ${(next)?``:`disabled`}" onclick="load_following_posts(${current+1})">
+                <a class="page-link">Next</a>
+            </li>
+        </ul>
+    `
+} 
+async function load_following_posts(page=1) { 
+    let fetch_json = await fetch(`/api/posts/following?page=${page}`).then(response => response.json());
+    let posts = fetch_json["posts"];
+    let paginator = fetch_json["paginator"];
+    document.querySelector(".posts-wrapper").innerHTML = "";  // clear up any existing components
+    document.querySelector(".page-heading").innerHTML = "Following Posts"; 
+    for(const post in posts) { 
+        var liked = false; 
+        let likeStatus = await fetch(`/api/post/${posts[post]["post_id"]}/liked`).then(response => response.json()); 
+        if ( likeStatus["status"] === true ) { 
+            liked = true;
+        }
+        else { 
+            liked = false; 
+        }
+        document.querySelector(".posts-wrapper").innerHTML += `
+            <div class="post">
+                <div class="column-1">
+                    <h5 onclick="showProfileInfo(${posts[post]["creator"]["id"]})">${posts[post]["creator"]["username"]}</h5> 
+                    <span id="pencil-icon" onclick="triggerPostEditPanel(event)">
+                        <i class="fa-sharp fa-solid fa-pen" id="edit-icon" style="color: rgba(6, 130, 6, 0.401); margin: 0.3rem;"></i>
+                    </span>
+                </div>
+                <div class="column-2">
+                    <h4 class="post-content-text" >
+                        ${posts[post]["content"]}
+                    </h4>
+                    <div class="form-group editPanel">
+                        <input type="text" class="form-control newPostContent">
+                        <small id="editHelp" class="form-text text-muted">click on <b>update</b> to change post content</small>
+                        <button type="submit" class="btn btn-dark" style="margin-top: 1rem" onclick="updateContent(event, ${posts[post]["post_id"]})">Update</button>
+                </div> 
+                </div>
+                <div class="column-3">
+                    <p>
+                        ${posts[post]["posted_time"]}
+                    </p>
+                    <div class="react-btns">   
+                        ${liked ? `<i class="fa-sharp fa-solid fa-heart liked" onclick="triggerHeartReactions(event, ${posts[post]["post_id"]})"></i>` : `<i class="fa-sharp fa-solid fa-heart disliked" onclick="triggerHeartReactions(event, ${posts[post]["post_id"]})"></i>`}
+                        <span class="like-count">${posts[post]["n_likes"]}</span>
+                    </div>
+                </div>
+            </div>
+        `; 
+        load_post_paginator(paginator["total_pages"], paginator["current_page"], paginator["has_prev"], paginator["has_next"], document.querySelector(".pagination-posts"));
+    }
+}

@@ -247,3 +247,24 @@ def follow_events(request, user_id):
     return Response({
         "error": "method not allowed"
     })
+
+@api_view(['GET'])
+def following_posts(request): 
+    if not request.user.is_authenticated: 
+        return Response({})
+    following = User.objects.filter(followers=request.user)
+    following_posts = Post.objects.filter(creator__in=following).order_by("-posted_time")
+    postPaginator = Paginator(following_posts, PAGES_PER_PAGE) 
+    page = request.GET.get('page')
+    filtered_posts = postPaginator.get_page(page)
+    serialized = PostSerializer(filtered_posts, many=True) 
+    return_embedded_data = { 
+        "posts": serialized.data,
+        "paginator": {
+            "total_pages": postPaginator.num_pages,
+            "current_page": filtered_posts.number,
+            "has_next": filtered_posts.has_next(),
+            "has_prev": filtered_posts.has_previous(),
+        }
+    }
+    return Response(return_embedded_data)
