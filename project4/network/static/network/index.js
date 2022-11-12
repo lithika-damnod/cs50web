@@ -31,7 +31,8 @@ function triggerHeartReactions(event, post_id) {
     }
 }
 
-async function showProfileInfo(user_id) { 
+async function showProfileInfo(user_id, page=1) { 
+    console.log("showProfileInfo() running!, ", "page", page); 
     // hide header section 
     document.querySelector(".create-post-wrapper").style.display = "none"; 
     document.querySelector(".page-title").style.display = "none"; 
@@ -43,13 +44,14 @@ async function showProfileInfo(user_id) {
     document.querySelector(".profile-info-wrapper").style.display = "flex"; 
 
     // render post componets
-    let user_data = await fetch(`/api/user/${user_id}`).then(response => response.json());
+    let user_data = await fetch(`/api/user/${user_id}/?page=${page}`).then(response => response.json());
     let account_data = await user_data["creator"];  
     let account_post_data = await user_data["posts"];
+    let paginator = await user_data["paginator"]; 
     // render components 
     document.getElementById("profile-info-username").innerHTML = account_data["username"];
+    document.querySelector(".posts-container").innerHTML = ""; // clearing out all other components that might have existed before 
     for(const post in account_post_data) {
-
         // fetch for like status  
         var liked = false; 
         let likeStatus = await fetch(`/api/post/${account_post_data[post]["post_id"]}/liked`).then(response => response.json()); 
@@ -84,6 +86,7 @@ async function showProfileInfo(user_id) {
             </div>
         `; 
     }
+    load_profile_post_paginator(user_id, paginator["total_pages"], paginator["current_page"], paginator["has_prev"], paginator["has_next"], document.querySelector(".profile-pagination-posts"));
 }
 
 
@@ -97,11 +100,14 @@ function createPost() {
     })
 }
 
-async function loadPosts() { 
-    let postRes = await fetch('/api/posts'); 
+async function loadPosts(page=1) { 
+    let postRes = await fetch(`/api/posts?page=${page}`); 
     let json_posts = await postRes.json(); 
     let posts = await json_posts["posts"]; 
+    let paginator = await json_posts["paginator"]
+    console.log(paginator); 
     // render components
+    document.querySelector(".posts-wrapper").innerHTML = ""; 
     for(const post in posts) { 
         var liked = false; 
         let likeStatus = await fetch(`/api/post/${posts[post]["post_id"]}/liked`).then(response => response.json()); 
@@ -141,6 +147,8 @@ async function loadPosts() {
             </div>
         `
     }
+    // render paginator 
+    load_post_paginator(paginator["total_pages"], paginator["current_page"], paginator["has_prev"], paginator["has_next"], document.querySelector(".pagination-posts"));
 }
 
 function triggerPostEditPanel(event) { 
@@ -180,3 +188,39 @@ function updateContent(event, post_id) {
         editPanel.style.display = "none";
     })
 }
+
+function load_post_paginator(total, current, prev, next, component) {  
+    let page_li = ""; 
+    for(var i=1; i<=total; i++) { 
+        page_li += `<li class="page-item ${(i === current)?'active':''}" onclick="loadPosts(${i})"><a class="page-link">${i}</a></li>`
+    }
+    component.innerHTML = `
+        <ul class="pagination" style="margin-left: 3rem;">
+            <li class="page-item ${(prev)?``:`disabled`}" onclick="loadPosts(${current-1})">
+                <a class="page-link" tabindex="-1">Previous</a>
+            </li>
+            ${ page_li }
+            <li class="page-item ${(next)?``:`disabled`}" onclick="loadPosts(${current+1})">
+                <a class="page-link">Next</a>
+            </li>
+        </ul>
+    `
+} 
+function load_profile_post_paginator(user_id, total, current, prev, next, component) {  
+    console.log("load_profile_post_paginator running!"); 
+    let page_li = ""; 
+    for(var i=1; i<=total; i++) { 
+        page_li += `<li class="page-item ${(i === current)?'active':''}" onclick="showProfileInfo(${user_id}, ${i})"><a class="page-link">${i}</a></li>`
+    }
+    component.innerHTML = `
+        <ul class="pagination justify-content-center" style="margin-left: 3rem;">
+            <li class="page-item ${(prev)?``:`disabled`}" onclick="showProfileInfo(${user_id}, ${current-1})">
+                <a class="page-link" tabindex="-1">Previous</a>
+            </li>
+            ${ page_li }
+            <li class="page-item ${(next)?``:`disabled`}" onclick="showProfileInfo(${user_id}, ${current+1})">
+                <a class="page-link">Next</a>
+            </li>
+        </ul>
+    `
+} 
