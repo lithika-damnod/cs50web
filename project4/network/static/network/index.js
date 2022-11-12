@@ -80,51 +80,50 @@ function createPost() {
     })
 }
 
-function loadPosts() { 
-    fetch('/api/posts')
-        .then(response => response.json())
-        .then(posts => {
-            // render components
-            for(const post in posts) { 
-                var liked = false; 
-                fetch(`/api/post/${posts[post]["post_id"]}/liked`) .then(response => response.json())
-                    .then(likeStatus => {
-                        if(likeStatus["status"] === true) { 
-                            liked = true; 
-                        }
-                        else { liked = false; }
-                        document.querySelector(".posts-wrapper").innerHTML += `
-                            <div class="post">
-                                <div class="column-1">
-                                    <h5 onclick="showProfileInfo(${posts[post]["creator"]["id"]})">${posts[post]["creator"]["username"]}</h5> 
-                                    <span id="pencil-icon" onclick="triggerPostEditPanel(event)">
-                                        <i class="fa-sharp fa-solid fa-pen" id="edit-icon" style="color: rgba(6, 130, 6, 0.401); margin: 0.3rem;"></i>
-                                    </span>
-                                </div>
-                                <div class="column-2">
-                                    <h4 class="post-content-text" >
-                                        ${posts[post]["content"]}
-                                    </h4>
-                                    <div class="form-group editPanel">
-                                        <input type="text" class="form-control newPostContent">
-                                        <small id="editHelp" class="form-text text-muted">click on <b>update</b> to change post content</small>
-                                        <button type="submit" class="btn btn-dark" style="margin-top: 1rem" onclick="updateContent(event, ${posts[post]["post_id"]})">Update</button>
-                                </div> 
-                                </div>
-                                <div class="column-3">
-                                    <p>
-                                        ${posts[post]["posted_time"]}
-                                    </p>
-                                    <div class="react-btns">   
-                                        ${liked ? `<i class="fa-sharp fa-solid fa-heart liked" onclick="triggerHeartReactions(event, ${posts[post]["post_id"]})"></i>` : `<i class="fa-sharp fa-solid fa-heart disliked" onclick="triggerHeartReactions(event, ${posts[post]["post_id"]})"></i>`}
-                                        <i class="fa-sharp fa-solid fa-comment"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        `
-                }); 
-            }
-        })
+async function loadPosts() { 
+    let postRes = await fetch('/api/posts'); 
+    let posts = await postRes.json(); 
+    // render components
+    for(const post in posts) { 
+        console.log(posts[post]); 
+        var liked = false; 
+        let likeStatus = await fetch(`/api/post/${posts[post]["post_id"]}/liked`).then(response => response.json()); 
+        if ( likeStatus["status"] === true ) { 
+            liked = true;
+        }
+        else { 
+            liked = false; 
+        }
+        document.querySelector(".posts-wrapper").innerHTML += `
+            <div class="post">
+                <div class="column-1">
+                    <h5 onclick="showProfileInfo(${posts[post]["creator"]["id"]})">${posts[post]["creator"]["username"]}</h5> 
+                    <span id="pencil-icon" onclick="triggerPostEditPanel(event)">
+                        <i class="fa-sharp fa-solid fa-pen" id="edit-icon" style="color: rgba(6, 130, 6, 0.401); margin: 0.3rem;"></i>
+                    </span>
+                </div>
+                <div class="column-2">
+                    <h4 class="post-content-text" >
+                        ${posts[post]["content"]}
+                    </h4>
+                    <div class="form-group editPanel">
+                        <input type="text" class="form-control newPostContent">
+                        <small id="editHelp" class="form-text text-muted">click on <b>update</b> to change post content</small>
+                        <button type="submit" class="btn btn-dark" style="margin-top: 1rem" onclick="updateContent(event, ${posts[post]["post_id"]})">Update</button>
+                </div> 
+                </div>
+                <div class="column-3">
+                    <p>
+                        ${posts[post]["posted_time"]}
+                    </p>
+                    <div class="react-btns">   
+                        ${liked ? `<i class="fa-sharp fa-solid fa-heart liked" onclick="triggerHeartReactions(event, ${posts[post]["post_id"]})"></i>` : `<i class="fa-sharp fa-solid fa-heart disliked" onclick="triggerHeartReactions(event, ${posts[post]["post_id"]})"></i>`}
+                        <i class="fa-sharp fa-solid fa-comment"></i>
+                    </div>
+                </div>
+            </div>
+        `
+    }
 }
 
 function triggerPostEditPanel(event) { 
