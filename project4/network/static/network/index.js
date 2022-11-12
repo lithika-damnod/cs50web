@@ -7,6 +7,11 @@ function triggerHeartReactions(event, post_id) {
     if ( classList[3] === 'liked' ) {
         event.target.classList.add('disliked');
         event.target.classList.remove('liked'); 
+        // update like count 
+        console.log(event.currentTarget.parentNode); 
+        var like_count_component = event.currentTarget.parentNode.querySelector(".like-count")
+        var curr_likes = parseInt(like_count_component.innerHTML); 
+        like_count_component.innerHTML = curr_likes - 1;  
         // send PUT request to update like status -> false    
         axios.put(`/api/post/${post_id}/liked`, {}, {  // send a blank put request, so it'll do the opposite of what it currently has in it's state
             headers: {'X-CSRFToken': csrf_token}
@@ -15,6 +20,10 @@ function triggerHeartReactions(event, post_id) {
     else { 
         event.target.classList.add('liked');
         event.target.classList.remove('disliked'); 
+        // update like count 
+        var like_count_component = event.currentTarget.parentNode.querySelector(".like-count"); 
+        var curr_likes = parseInt(like_count_component.innerHTML); 
+        like_count_component.innerHTML = curr_likes + 1;  
         // send PUT request to update like status -> true
         axios.put(`/api/post/${post_id}/liked`, {}, {  // send a blank put request, so it'll do the opposite of what it currently has in it's state
             headers: {'X-CSRFToken': csrf_token}
@@ -22,7 +31,7 @@ function triggerHeartReactions(event, post_id) {
     }
 }
 
-function showProfileInfo(user_id) { 
+async function showProfileInfo(user_id) { 
     // hide header section 
     document.querySelector(".create-post-wrapper").style.display = "none"; 
     document.querySelector(".page-title").style.display = "none"; 
@@ -34,40 +43,48 @@ function showProfileInfo(user_id) {
     document.querySelector(".profile-info-wrapper").style.display = "flex"; 
 
     // render post componets
-    fetch(`/api/user/${user_id}`)
-        .then(response => response.json())
-        .then( user_data => {
-            let account_data = user_data["creator"];  
-            let account_post_data = user_data["posts"];
-            // render components 
-            document.getElementById("profile-info-username").innerHTML = account_data["username"];
-            for(const post in account_post_data) {
-                document.querySelector(".posts-container").innerHTML += `
-                    <div class="post" style="width: 50vw">
-                        <div class="column-1" style="justify-content: flex-end;">
-                            <h5>${account_data["username"]}</h5> 
-                            <span id="pencil-icon">
-                                <i class="fa-sharp fa-solid fa-pen" id="edit-icon" style="color: rgba(6, 130, 6, 0.401); margin: 0.3rem;"></i>
-                            </span>
-                        </div>
-                        <div class="column-2">
-                            <h4>
-                                ${account_post_data[post]["content"]}
-                            </h4>
-                        </div>
-                        <div class="column-3">
-                            <p>
-                                ${account_post_data[post]["posted_time"]}
-                            </p>
-                            <div class="react-btns">   
-                                <i class="fa-sharp fa-solid fa-heart" onclick="triggerHeartReactions(event, ${account_post_data[post]["post_id"]})"></i>
-                                <i class="fa-sharp fa-solid fa-comment"></i>
-                            </div>
-                        </div>
+    let user_data = await fetch(`/api/user/${user_id}`).then(response => response.json());
+    let account_data = await user_data["creator"];  
+    let account_post_data = await user_data["posts"];
+    // render components 
+    document.getElementById("profile-info-username").innerHTML = account_data["username"];
+    for(const post in account_post_data) {
+
+        // fetch for like status  
+        var liked = false; 
+        let likeStatus = await fetch(`/api/post/${account_post_data[post]["post_id"]}/liked`).then(response => response.json()); 
+        if ( likeStatus["status"] === true ) { 
+            liked = true;
+        }
+        else { 
+            liked = false; 
+        }
+
+        document.querySelector(".posts-container").innerHTML += `
+            <div class="post" style="width: 50vw">
+                <div class="column-1" style="justify-content: flex-end;">
+                    <h5>${account_data["username"]}</h5> 
+                    <span id="pencil-icon">
+                        <i class="fa-sharp fa-solid fa-pen" id="edit-icon" style="color: rgba(6, 130, 6, 0.401); margin: 0.3rem;"></i>
+                    </span>
+                </div>
+                <div class="column-2">
+                    <h4>
+                        ${account_post_data[post]["content"]}
+                    </h4>
+                </div>
+                <div class="column-3">
+                    <p>
+                        ${account_post_data[post]["posted_time"]}
+                    </p>
+                    <div class="react-btns">   
+                        ${liked ? `<i class="fa-sharp fa-solid fa-heart liked" onclick="triggerHeartReactions(event, ${account_post_data[post]["post_id"]})"></i>` : `<i class="fa-sharp fa-solid fa-heart disliked" onclick="triggerHeartReactions(event, ${account_post_data[post]["post_id"]})"></i>`}
+                        <span class="like-count">${account_post_data[post]["n_likes"]}</span>
                     </div>
-                `; 
-            }
-        })
+                </div>
+            </div>
+        `; 
+    }
 }
 
 
@@ -77,6 +94,7 @@ function createPost() {
         headers: {'X-CSRFToken': csrf_token}
     }).then(response => {
         document.getElementById("newPostContent").value = "";
+        window.location.reload(); 
     })
 }
 
@@ -85,7 +103,6 @@ async function loadPosts() {
     let posts = await postRes.json(); 
     // render components
     for(const post in posts) { 
-        console.log(posts[post]); 
         var liked = false; 
         let likeStatus = await fetch(`/api/post/${posts[post]["post_id"]}/liked`).then(response => response.json()); 
         if ( likeStatus["status"] === true ) { 
@@ -118,7 +135,7 @@ async function loadPosts() {
                     </p>
                     <div class="react-btns">   
                         ${liked ? `<i class="fa-sharp fa-solid fa-heart liked" onclick="triggerHeartReactions(event, ${posts[post]["post_id"]})"></i>` : `<i class="fa-sharp fa-solid fa-heart disliked" onclick="triggerHeartReactions(event, ${posts[post]["post_id"]})"></i>`}
-                        <i class="fa-sharp fa-solid fa-comment"></i>
+                        <span class="like-count">${posts[post]["n_likes"]}</span>
                     </div>
                 </div>
             </div>

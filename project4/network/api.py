@@ -118,6 +118,11 @@ def like_status(request, post_id):
             liker = post_obj.likers.get(username=request.user) 
         except User.DoesNotExist:
             post_obj.likers.add(request.user)
+
+            # increment like count 
+            curr_likes = post_obj.n_likes 
+            post_obj.n_likes = curr_likes + 1
+
             post_obj.save()
             return Response({
                 "status": True
@@ -125,7 +130,16 @@ def like_status(request, post_id):
 
         # if the liker is already in it 
         post_obj.likers.remove(request.user)
+        # decrement like count 
+        curr_likes = post_obj.n_likes 
+        # possible error
+        if curr_likes-1 < 0:
+            post_obj.n_likes = 0
+        else: 
+            post_obj.n_likes = curr_likes - 1
+
         post_obj.save()
+
         return Response({
             "status": False
         })

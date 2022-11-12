@@ -93,6 +93,8 @@
     display: flex; 
     font-size: 1.5rem; 
     color: rgb(68, 68, 68);
+    justify-content: center;
+    align-items: center;
 }
 .post .column-3 .react-btns * { 
     margin-right: 1.1rem; 
@@ -136,4 +138,17 @@
 }
 .editPanel { 
     display: none; 
+}
+.like-count { 
+    display: flex; 
+    width: 30px; 
+    height: 30px; 
+    background-color: rgba(128, 160, 177, 0.449); 
+    border-radius: 40%; 
+    padding: 1.05rem; 
+    color: white; 
+    font-size: 1rem; 
+    font-weight: bold;
+    justify-content: center;
+    align-items: center;
 }
