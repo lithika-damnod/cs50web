@@ -180,12 +180,14 @@ def single_user(request, user_id):
     user_obj = User.objects.get(id=user_id)
     user_serialized = UserSerializer(user_obj)
     user_posts = Post.objects.filter(creator=user_obj).order_by("-posted_time")
+    follows = User.objects.filter(followers = user_obj).count()
     postPaginator = Paginator(user_posts, PAGES_PER_PAGE) 
     page = request.GET.get('page')
     filtered_posts = postPaginator.get_page(page)
     user_posts_serialized = PostSerializer(filtered_posts, many=True)
     json_res = { 
         "creator":user_serialized.data, 
+        "follows": follows,
         "posts": user_posts_serialized.data, 
         "paginator": {
             "total_pages": postPaginator.num_pages,

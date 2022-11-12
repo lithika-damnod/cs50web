@@ -1,6 +1,7 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
+    {% if user.is_authenticated %}
     <div class="create-post-wrapper">
         <h5 style="margin-left: 1rem">Create Post ✍️ </h5>
         <div class="create-post-frame">
@@ -10,6 +11,7 @@
         </div>
         <button type="button" class="btn btn-secondary" style="margin-left: 1rem" onclick="createPost()">Post</button>
     </div>
+    {% endif %}
     <div class="page-title" style="margin-left: 1rem">
         <h1 class="page-heading">All Posts</h1>
     </div>
@@ -25,7 +27,8 @@
         <div class="main-wrapper">
             <h3 id="profile-info-username"></h3>
             <span class="follow-btn-container"></span>
-            <h6 style="margin-top: 0.6rem"><span class="n-followers"></span> Followers</h6>
+            <h6 style="margin-top: 0.6rem"><span class="n-followers"></span> followers</h6>
+            <h6 style="margin-top: 0rem"><span class="n-following"></span> following</h6>
             <div class="posts-container">
                 <!-- JS fetched components goes here -->
             </div>

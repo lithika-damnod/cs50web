@@ -32,9 +32,10 @@ function triggerHeartReactions(event, post_id) {
 }
 
 async function showProfileInfo(user_id, page=1) { 
-    console.log("showProfileInfo() running!, ", "page", page); 
     // hide header section 
-    document.querySelector(".create-post-wrapper").style.display = "none"; 
+    if(isAuthenticated) {
+        document.querySelector(".create-post-wrapper").style.display = "none"; 
+    }
     document.querySelector(".page-title").style.display = "none"; 
     // hide post section 
     document.querySelector(".posts-wrapper").style.display = "none";
@@ -52,7 +53,8 @@ async function showProfileInfo(user_id, page=1) {
     // render components 
     document.getElementById("profile-info-username").innerHTML = account_data["username"];
     document.querySelector(".posts-container").innerHTML = ""; // clearing out all other components that might have existed before 
-    document.querySelector(".n-followers").innerHTML = `${account_data["n_followers"]}`; 
+    document.querySelector(".n-followers").innerHTML = `<b>${account_data["n_followers"]}</b>`; 
+    document.querySelector(".n-following").innerHTML = `<b>${user_data["follows"]}</b>`; 
     let isFollowingJson = await fetch(`/api/user/${user_id}/follow`).then(response => response.json()); 
     let isFollowing = isFollowingJson["status"]; 
     document.querySelector(".follow-btn-container").innerHTML = (isFollowing)?`
@@ -60,6 +62,9 @@ async function showProfileInfo(user_id, page=1) {
     `:`
         <button type="button" class="btn btn-secondary follow-btn" onclick="handleFollowing(${account_data["id"]})">Follow</button>
     `; 
+    if (!isAuthenticated) { 
+        document.querySelector(".follow-btn-container").innerHTML = ""; 
+    }
     for(const post in account_post_data) {
         // fetch for like status  
         var liked = false; 
@@ -81,15 +86,20 @@ async function showProfileInfo(user_id, page=1) {
                 <div class="column-1" style="justify-content: flex-end;">
                     <h5>${account_data["username"]}</h5> 
                     ${creator?`
-                        <span id="pencil-icon">
+                        <span id="pencil-icon" onclick="triggerPostEditPanel(event)">
                             <i class="fa-sharp fa-solid fa-pen" id="edit-icon" style="color: rgba(6, 130, 6, 0.401); margin: 0.3rem;"></i>
                         </span>
                     `:``}
                 </div>
                 <div class="column-2">
-                    <h4>
+                    <h4 class="post-content-text">
                         ${account_post_data[post]["content"]}
                     </h4>
+                    <div class="form-group editPanel">
+                        <input type="text" class="form-control newPostContent">
+                        <small id="editHelp" class="form-text text-muted">click on <b>update</b> to change post content</small>
+                        <button type="submit" class="btn btn-dark" style="margin-top: 1rem" onclick="updateContent(event, ${account_post_data[post]["post_id"]})">Update</button>
+                    </div> 
                 </div>
                 <div class="column-3">
                     <p>
@@ -159,7 +169,7 @@ async function loadPosts(page=1) {
                         <input type="text" class="form-control newPostContent">
                         <small id="editHelp" class="form-text text-muted">click on <b>update</b> to change post content</small>
                         <button type="submit" class="btn btn-dark" style="margin-top: 1rem" onclick="updateContent(event, ${posts[post]["post_id"]})">Update</button>
-                </div> 
+                    </div> 
                 </div>
                 <div class="column-3">
                     <p>
