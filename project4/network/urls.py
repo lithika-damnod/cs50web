@@ -9,6 +9,7 @@ urlpatterns = [
     path("register", views.register, name="register"), 
 
     # REST api endpoints
+    path("api/user", views.current_user, name="current_user"),
     path("api/post", views.create_post, name="posts"), 
     path("api/post/<int:post_id>", views.single_post, name="single_post"),
     path("api/post/<int:post_id>/liked", views.like_status, name="like_status"),

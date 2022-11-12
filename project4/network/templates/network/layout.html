@@ -5,7 +5,7 @@
     <head>
         <script> 
             const csrf_token = '{{ csrf_token }}'; 
-            const isAuthenticated = ('{{ user.is_authenticated' === 'True')?true:false;
+            const isAuthenticated = ('{{ user.is_authenticated }}' === 'True')?true:false;
         </script>
         <title>{% block title %}Social Network{% endblock %}</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">

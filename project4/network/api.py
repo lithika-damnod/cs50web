@@ -14,6 +14,16 @@ from .serializers import *
 PAGES_PER_PAGE = 10
 """ Post Manipulating API endpoints """
 
+@api_view(['GET'])
+def current_user(request): 
+    if not request.user.is_authenticated:
+        return Response({
+            "error": "user must be logged in" 
+        })
+    curr_user_obj = User.objects.get(username=request.user)
+    serializer = UserSerializer(curr_user_obj)
+    return Response(serializer.data)
+
 @api_view(['POST'])
 def create_post(request): 
     if not request.user.is_authenticated:

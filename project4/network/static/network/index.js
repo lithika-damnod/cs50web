@@ -48,6 +48,7 @@ async function showProfileInfo(user_id, page=1) {
     let account_data = await user_data["creator"];  
     let account_post_data = await user_data["posts"];
     let paginator = await user_data["paginator"]; 
+    let logged_user = await fetch("/api/user").then(response => response.json());
     // render components 
     document.getElementById("profile-info-username").innerHTML = account_data["username"];
     document.querySelector(".posts-container").innerHTML = ""; // clearing out all other components that might have existed before 
@@ -69,13 +70,21 @@ async function showProfileInfo(user_id, page=1) {
         else { 
             liked = false; 
         }
+
+        // determine whether the current user is the creator
+        var creator = false; 
+        if(logged_user["id"] === account_post_data[post]["creator"]["id"]) { creator = true; }
+        else { creator = false; }
+
         document.querySelector(".posts-container").innerHTML += `
             <div class="post" style="width: 50vw">
                 <div class="column-1" style="justify-content: flex-end;">
                     <h5>${account_data["username"]}</h5> 
-                    <span id="pencil-icon">
-                        <i class="fa-sharp fa-solid fa-pen" id="edit-icon" style="color: rgba(6, 130, 6, 0.401); margin: 0.3rem;"></i>
-                    </span>
+                    ${creator?`
+                        <span id="pencil-icon">
+                            <i class="fa-sharp fa-solid fa-pen" id="edit-icon" style="color: rgba(6, 130, 6, 0.401); margin: 0.3rem;"></i>
+                        </span>
+                    `:``}
                 </div>
                 <div class="column-2">
                     <h4>
@@ -87,7 +96,9 @@ async function showProfileInfo(user_id, page=1) {
                         ${account_post_data[post]["posted_time"]}
                     </p>
                     <div class="react-btns">   
-                        ${liked ? `<i class="fa-sharp fa-solid fa-heart liked" onclick="triggerHeartReactions(event, ${account_post_data[post]["post_id"]})"></i>` : `<i class="fa-sharp fa-solid fa-heart disliked" onclick="triggerHeartReactions(event, ${account_post_data[post]["post_id"]})"></i>`}
+                        ${isAuthenticated?`
+                            ${liked ? `<i class="fa-sharp fa-solid fa-heart liked" onclick="triggerHeartReactions(event, ${account_post_data[post]["post_id"]})"></i>` : `<i class="fa-sharp fa-solid fa-heart disliked" onclick="triggerHeartReactions(event, ${account_post_data[post]["post_id"]})"></i>`}
+                        `:``}
                         <span class="like-count">${account_post_data[post]["n_likes"]}</span>
                     </div>
                 </div>
@@ -113,7 +124,7 @@ async function loadPosts(page=1) {
     let json_posts = await postRes.json(); 
     let posts = await json_posts["posts"]; 
     let paginator = await json_posts["paginator"]
-    console.log(paginator); 
+    let logged_user = await fetch("/api/user").then(response => response.json());
     // render components
     document.querySelector(".posts-wrapper").innerHTML = ""; 
     for(const post in posts) { 
@@ -125,13 +136,20 @@ async function loadPosts(page=1) {
         else { 
             liked = false; 
         }
+        // determine whether the current user is the creator
+        var creator = false; 
+        if(logged_user["id"] === posts[post]["creator"]["id"]) { creator = true; }
+        else { creator = false; }
+
         document.querySelector(".posts-wrapper").innerHTML += `
             <div class="post">
                 <div class="column-1">
                     <h5 onclick="showProfileInfo(${posts[post]["creator"]["id"]})">${posts[post]["creator"]["username"]}</h5> 
-                    <span id="pencil-icon" onclick="triggerPostEditPanel(event)">
-                        <i class="fa-sharp fa-solid fa-pen" id="edit-icon" style="color: rgba(6, 130, 6, 0.401); margin: 0.3rem;"></i>
-                    </span>
+                    ${creator?`
+                        <span id="pencil-icon" onclick="triggerPostEditPanel(event)">
+                            <i class="fa-sharp fa-solid fa-pen" id="edit-icon" style="color: rgba(6, 130, 6, 0.401); margin: 0.3rem;"></i>
+                        </span>
+                    `:``}
                 </div>
                 <div class="column-2">
                     <h4 class="post-content-text" >
@@ -148,7 +166,9 @@ async function loadPosts(page=1) {
                         ${posts[post]["posted_time"]}
                     </p>
                     <div class="react-btns">   
-                        ${liked ? `<i class="fa-sharp fa-solid fa-heart liked" onclick="triggerHeartReactions(event, ${posts[post]["post_id"]})"></i>` : `<i class="fa-sharp fa-solid fa-heart disliked" onclick="triggerHeartReactions(event, ${posts[post]["post_id"]})"></i>`}
+                        ${isAuthenticated?`
+                            ${liked ? `<i class="fa-sharp fa-solid fa-heart liked" onclick="triggerHeartReactions(event, ${posts[post]["post_id"]})"></i>` : `<i class="fa-sharp fa-solid fa-heart disliked" onclick="triggerHeartReactions(event, ${posts[post]["post_id"]})"></i>`}
+                        `:``}
                         <span class="like-count">${posts[post]["n_likes"]}</span>
                     </div>
                 </div>
@@ -267,9 +287,17 @@ async function load_following_posts(page=1) {
     let fetch_json = await fetch(`/api/posts/following?page=${page}`).then(response => response.json());
     let posts = fetch_json["posts"];
     let paginator = fetch_json["paginator"];
+    let logged_user = await fetch("/api/user").then(response => response.json());
+
     document.querySelector(".posts-wrapper").innerHTML = "";  // clear up any existing components
     document.querySelector(".page-heading").innerHTML = "Following Posts"; 
     for(const post in posts) { 
+
+        // determine whether the current user is the creator
+        var creator = false; 
+        if(logged_user["id"] === posts[post]["creator"]["id"]) { creator = true; }
+        else { creator = false; }
+
         var liked = false; 
         let likeStatus = await fetch(`/api/post/${posts[post]["post_id"]}/liked`).then(response => response.json()); 
         if ( likeStatus["status"] === true ) { 
@@ -278,13 +306,16 @@ async function load_following_posts(page=1) {
         else { 
             liked = false; 
         }
+
         document.querySelector(".posts-wrapper").innerHTML += `
             <div class="post">
                 <div class="column-1">
                     <h5 onclick="showProfileInfo(${posts[post]["creator"]["id"]})">${posts[post]["creator"]["username"]}</h5> 
-                    <span id="pencil-icon" onclick="triggerPostEditPanel(event)">
-                        <i class="fa-sharp fa-solid fa-pen" id="edit-icon" style="color: rgba(6, 130, 6, 0.401); margin: 0.3rem;"></i>
-                    </span>
+                    ${creator?`
+                        <span id="pencil-icon" onclick="triggerPostEditPanel(event)">
+                            <i class="fa-sharp fa-solid fa-pen" id="edit-icon" style="color: rgba(6, 130, 6, 0.401); margin: 0.3rem;"></i>
+                        </span>
+                    `:``}
                 </div>
                 <div class="column-2">
                     <h4 class="post-content-text" >
@@ -301,7 +332,9 @@ async function load_following_posts(page=1) {
                         ${posts[post]["posted_time"]}
                     </p>
                     <div class="react-btns">   
-                        ${liked ? `<i class="fa-sharp fa-solid fa-heart liked" onclick="triggerHeartReactions(event, ${posts[post]["post_id"]})"></i>` : `<i class="fa-sharp fa-solid fa-heart disliked" onclick="triggerHeartReactions(event, ${posts[post]["post_id"]})"></i>`}
+                        ${isAuthenticated?`
+                            ${liked ? `<i class="fa-sharp fa-solid fa-heart liked" onclick="triggerHeartReactions(event, ${posts[post]["post_id"]})"></i>` : `<i class="fa-sharp fa-solid fa-heart disliked" onclick="triggerHeartReactions(event, ${posts[post]["post_id"]})"></i>`}
+                        `:``}
                         <span class="like-count">${posts[post]["n_likes"]}</span>
                     </div>
                 </div>
