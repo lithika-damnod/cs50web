@@ -59,7 +59,6 @@ async function showProfileInfo(user_id) {
         else { 
             liked = false; 
         }
-
         document.querySelector(".posts-container").innerHTML += `
             <div class="post" style="width: 50vw">
                 <div class="column-1" style="justify-content: flex-end;">
@@ -100,7 +99,8 @@ function createPost() {
 
 async function loadPosts() { 
     let postRes = await fetch('/api/posts'); 
-    let posts = await postRes.json(); 
+    let json_posts = await postRes.json(); 
+    let posts = await json_posts["posts"]; 
     // render components
     for(const post in posts) { 
         var liked = false; 

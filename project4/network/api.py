@@ -7,9 +7,11 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
+from django.core.paginator import Paginator
 from .models import *
 from .serializers import * 
 
+PAGES_PER_PAGE = 2
 """ Post Manipulating API endpoints """
 
 @api_view(['POST'])
@@ -148,17 +150,38 @@ def like_status(request, post_id):
 @api_view(['GET'])
 def all_posts(request): 
     all_posts = Post.objects.all().order_by("-posted_time")
-    serialized = PostSerializer(all_posts, many=True)
-    return Response(serialized.data)
+    postPaginator = Paginator(all_posts, PAGES_PER_PAGE) 
+    page = request.GET.get('page')
+    filtered_posts = postPaginator.get_page(page)
+    serialized = PostSerializer(filtered_posts, many=True)
+    return_serialized_data = {
+        "posts":serialized.data,
+        "paginator": {
+            "total_pages": postPaginator.num_pages,
+            "current_page": filtered_posts.number,
+            "has_next": filtered_posts.has_next(),
+            "has_prev": filtered_posts.has_previous(),
+        }
+    }
+    return Response(return_serialized_data)
 
 @api_view(['GET'])
 def single_user(request, user_id): 
     user_obj = User.objects.get(id=user_id)
     user_serialized = UserSerializer(user_obj)
     user_posts = Post.objects.filter(creator=user_obj).order_by("-posted_time")
-    user_posts_serialized = PostSerializer(user_posts, many=True)
+    postPaginator = Paginator(user_posts, PAGES_PER_PAGE) 
+    page = request.GET.get('page')
+    filtered_posts = postPaginator.get_page(page)
+    user_posts_serialized = PostSerializer(filtered_posts, many=True)
     json_res = { 
         "creator":user_serialized.data, 
-        "posts": user_posts_serialized.data 
+        "posts": user_posts_serialized.data, 
+        "paginator": {
+            "total_pages": postPaginator.num_pages,
+            "current_page": filtered_posts.number,
+            "has_next": filtered_posts.has_next(),
+            "has_prev": filtered_posts.has_previous(),
+        }
     }
     return Response(json_res)
