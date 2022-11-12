@@ -6,7 +6,7 @@ from .models import *
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username']
+        fields = ['id', 'username', 'n_followers', 'followers']
 
 class PostSerializer(serializers.ModelSerializer):
     posted_time = serializers.DateTimeField(format="%b %d %Y, %I:%M %p")

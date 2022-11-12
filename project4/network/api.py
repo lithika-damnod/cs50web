@@ -11,7 +11,7 @@ from django.core.paginator import Paginator
 from .models import *
 from .serializers import * 
 
-PAGES_PER_PAGE = 2
+PAGES_PER_PAGE = 10
 """ Post Manipulating API endpoints """
 
 @api_view(['POST'])
@@ -185,3 +185,65 @@ def single_user(request, user_id):
         }
     }
     return Response(json_res)
+
+
+@api_view(['GET', 'PUT'])
+def follow_events(request, user_id):
+    if not request.user.is_authenticated: 
+        return JsonResponse({
+            "error": "unauthorized"
+        }, status=401)
+    elif request.method == 'GET': 
+        try: 
+            user_object = User.objects.get(id=user_id)
+        except User.DoesNotExist: 
+            return Response({
+                "error": "user not found"
+            })
+        try: 
+            user_followers = user_object.followers.get(username=request.user)
+        except User.DoesNotExist:
+            return Response({
+                "status": False
+            })
+        return Response({
+            "status": True
+        })
+    elif request.method == 'PUT': 
+        try: 
+            user_obj = User.objects.get(id=user_id) 
+        except User.DoesNotExist:
+            return Response({"error": "user not found"}, status=404)
+
+        # trigger true and false.. initially true
+        try: 
+            follower = user_obj.followers.get(username=request.user) 
+        except User.DoesNotExist:
+            user_obj.followers.add(request.user)
+
+            # increment like count 
+            curr_followers = user_obj.n_followers
+            user_obj.n_followers = curr_followers + 1
+
+            user_obj.save()
+            return Response({
+                "status": True
+            }) 
+        # if the liker is already in it 
+        user_obj.followers.remove(request.user)
+        # decrement like count 
+        curr_followers = user_obj.n_followers
+        # possible error
+        if curr_followers-1 < 0:
+            user_obj.n_followers = 0
+        else: 
+            user_obj.n_followers = curr_followers - 1
+
+        user_obj.save()
+
+        return Response({
+            "status": False
+        })
+    return Response({
+        "error": "method not allowed"
+    })
