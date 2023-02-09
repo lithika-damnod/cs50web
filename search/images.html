@@ -110,6 +110,15 @@
             .row-5 a{
                 color: rgb(164, 155, 248); 
             }
+            button { 
+                padding: 0.4rem 1rem 0.4rem 1rem; 
+                margin-left: 1rem; 
+                border: none; 
+                border-radius: 10px; 
+                cursor: pointer; 
+                background-color: rgb(228, 228, 228);  
+                border: 1px solid rgba(0, 0, 0, 0.116); 
+            }
         </style>
     </head>
     <body>
@@ -130,6 +139,7 @@
             <div class="google-search-form">
                 <form action="https://google.com/search">
                     <input type="text" name="q" id="search-input" autocomplete=off>
+                    <button type="button" id="image-search-btn">Search</button>
                 </form>
             </div>
         </div>
@@ -147,6 +157,18 @@
                     window.location = "https://www.google.com/search?q="+text+"&tbm=isch"; 
                 }
             })
+            document.getElementById("image-search-btn").addEventListener("click", function(event){
+                    // search for spaces and replace them with "+"
+                    var text = document.getElementById("search-input").value; 
+                    for(var i=0; i<text.length; i++){
+                        if(text[i] == " "){
+                            text[i]  = "+"; 
+                        }
+                    }                    
+                    // https://www.google.com/search?q=lithika+damnod&tbm=isch
+                    window.location = "https://www.google.com/search?q="+text+"&tbm=isch"; 
+                }
+            )
         </script> 
     </body>
 </html>

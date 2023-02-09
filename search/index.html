@@ -53,6 +53,7 @@
                 border: 1px solid #323233; 
                 color: white;  
                 padding-left: 10px; 
+                transition: all cubic-bezier(0.445, 0.05, 0.55, 0.95) 0.2s;
             }
             #search-input:hover{
                 background-color: #19191a; 
@@ -110,6 +111,15 @@
             .row-5 a{
                 color: rgb(164, 155, 248); 
             }
+            button { 
+                background-color: #19191a;
+                color: white; 
+                padding: 0.4rem 1rem 0.4rem 1rem; 
+                margin-left: 1rem; 
+                border: none; 
+                border-radius: 10px; 
+                cursor: pointer; 
+            }
         </style>
     </head>
     <body>
@@ -130,6 +140,7 @@
             <div class="google-search-form">
                 <form action="https://google.com/search">
                     <input type="text" name="q" id="search-input" autocomplete=off>
+                    <button type="submit">Search</button>
                 </form>
             </div>
         </div>
