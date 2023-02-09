@@ -1,0 +1,180 @@
+<!doctype html> 
+<html> 
+    <head>
+        <title>Google Advanced Search</title>
+        <link rel="icon" type="image/x-icon" href="https://seeklogo.com/images/N/new-google-favicon-logo-5E38E037AF-seeklogo.com.png">
+        <style>
+            body{
+                margin: 0; 
+                background-color: rgba(32,33,36,1);
+                overflow: hidden; 
+            }
+            .container{
+                display: flex; 
+                flex-direction: column; 
+            }
+            .col{
+                display: flex; 
+                width: 100%;
+            }
+            .col-1{ 
+                object-fit: cover;   
+            }
+            .col-1 img{
+                margin-top: 15px;
+                margin-left: 10px;
+            }
+            .col-2{
+                padding-left: 40px; 
+                margin-bottom: 10px; 
+            }
+            .col-2 p{
+                color: #f28b82; 
+                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-size: 1.3em; 
+            }
+            .horizontal-divider{
+                display: block; 
+                border: 0.1px solid #3c4043;  
+                margin-bottom: 0px; 
+            }
+            .col-4{
+                display: flex; 
+                padding-left: 45px;
+                margin-bottom:-50px; 
+            }
+            .col-4 h3{
+                color: #e8eaed;     
+                font-weight: lighter; 
+                font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            }
+            .col-4 p{
+                display: inline-block; 
+                font-size: 13px; 
+                color: #e8eaed;
+            }
+            .form-box{
+                margin: 0; 
+                margin-top: 50px; 
+                display: inline-block;    
+                height: 300px; 
+            }
+            .form-text{
+                width: 230px; 
+                margin-left: 60px; 
+            }
+            .form-input{
+                width: 550px; 
+            }
+            .form-box input{
+                color: #bdc1c6; 
+                border: 1px solid #5f6368;
+                background-color: #202124;
+                height: 25px; 
+                width: 100%; 
+                border: 1px solid #5f6368; 
+                margin: 6px; 
+            }
+            .form-box input:focus{
+                outline: none !important;
+                border:1px solid rgb(49, 123, 209);
+            }
+            .half-input-space{
+                width: 100px;  
+            }
+            .col-5{ 
+                display: flex; 
+                width: 780px; 
+                justify-content: end;                
+            }
+            .col-5 button{
+                height: 30px; 
+                width: 130px;  
+                background-color: #8ab4f8; 
+                border: none; 
+                border-radius: 3px; 
+                color: black; 
+                font-weight: bold; 
+                color: #202124; 
+                cursor: pointer; 
+            }
+            .col-3{
+                position: relative;  
+                top: 30px; 
+                margin-left: 45px;
+                color:white;    
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="col col-1">
+                <a href="index.html">
+                    <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_light_color_272x92dp.png" height="24px" width="74px">
+                </a>
+            </div>
+            <div class="col col-2">
+                <p>Advanced Search</p>
+            </div>  
+            <div class="horizontal-divider"></div>
+            <div class="col col-3">
+                <p>Find pages with...</p>
+            </div>
+            <div class="col-4">
+                <div class="form-text form-box">
+                    <p>all these words: </p><br>
+                    <p>this exact word or phrase: </p><br>
+                    <p>any of these words: </p><br>
+                    <p>none of these words: </p><br>
+                    <p>numbers ranging from: </p><br>
+                </div>
+                <div class="form-input form-box">
+                    <input type="text" id="as_q" autofocus="true" autocomplete="off"><br>
+                    <input type="text" id="as_epq" autocomplete="off"><br>
+                    <input type="text" id="as_oq" autocomplete="off"><br> 
+                    <input type="text" id="as_eq" autocomplete="off"><br>
+                    <input type="text" style="width: 30%" id="as_nlo" autocomplete="off">
+                    <p>to</p>
+                    <input type="text" style="width: 30%" id="as_nhi" autocomplete="off"><br>
+                </div>         
+            </div>
+            <div class="col col-5">
+                <button type="buttton" id="advanced-search-btn">Advanced Search</button> 
+            </div>
+        </div>
+        <script> 
+            function formUrlText(text=""){
+                var formedText = ""; 
+                for(var i=0; i<text.length; i++){
+                    if(text[i] === " "){
+                        console.log("space detected"); 
+                        formedText += "+"; 
+                    }
+                    else{
+                        formedText += text[i]; 
+                    }
+                }
+                return text; 
+            }
+            /* 
+                "as_q" - all these words
+                "as_epq" - this exact words or phrases
+                "as_oq"- any of these words
+                "as_eq" - none of these words
+                "as_nlo" - numbers ranging from ( first value )
+                "as_nhi" - numbers ranging from ( second value ) 
+            */
+
+            // example:  https://www.google.com/search?as_q=all+these+words&as_epq=this+exact+word+or+phrase+&as_oq=any+of+these+words&as_eq=none+of+these+words&as_nlo=1&as_nhi=10
+            document.getElementById("advanced-search-btn").addEventListener("click", function(){
+                var as_q = document.getElementById("as_q").value; 
+                var as_epq = document.getElementById("as_epq").value; 
+                var as_oq = document.getElementById("as_oq").value; 
+                var as_eq = document.getElementById("as_eq").value; 
+                var as_nlo = document.getElementById("as_nlo").value; 
+                var as_nhi = document.getAnimations("as_nhi").value; 
+                window.location = "https://www.google.com/search?as_q=" + formUrlText(as_q) + "&as_epq=" + formUrlText(as_epq) + "&as_oq=" + formUrlText(as_oq) + "&as_eq=" + formUrlText(as_eq) + "&as_nlo=" + formUrlText(as_nlo) + "&as_nhi=" + formUrlText(as_nhi); 
+            }); 
+        </script>
+    </body>
+</html>

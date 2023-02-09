@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Google</title>
+        <link rel="icon" type="image/x-icon" href="https://seeklogo.com/images/N/new-google-favicon-logo-5E38E037AF-seeklogo.com.png">
+        <style>
+            body{
+                margin: 0; 
+            }
+            .container{
+                display: flex; 
+            }
+            .header{
+                display: flex; 
+                width: 100%; 
+                height: 50px; 
+                color: white; 
+                justify-content: end;
+            }
+            .header p{
+                font-family: sans-serif; 
+                margin: 5px; 
+                font-size: 0.9em; 
+                color: rgb(83, 83, 83); 
+            }
+            .google-logo{
+                display: inline-block;
+                background-color: red; 
+            }
+            .row-1{
+                margin-top: 10px;     
+            }
+            .row-2{
+                display: flex; 
+                margin-top: 40px;  
+                justify-content: center;     
+            }
+            .google-search-form{
+                position: relative; 
+                display: flex; 
+                flex-direction: column;  
+            }
+            .row-3{
+                margin-top: 20px; 
+                display: flex; 
+                justify-content: center;
+            }
+            #search-input{
+                border-radius: 50px; 
+                width: 550px; 
+                height: 40px; 
+                background-color: rgb(228, 228, 228);  
+                border: 1px solid rgb(228, 228, 228);  
+                color: rgb(83, 83, 83);  
+                padding-left: 10px; 
+            }
+            #search-input:hover{
+                background-color: rgb(228, 228, 228);  
+                border: none; 
+            }
+            #search-input:focus{
+                outline: none !important;
+                border: none;  
+                background-color: rgb(219, 218, 218); 
+            }
+            .row-4{
+                display: flex; 
+                justify-content: center;
+            }
+            .google-search-tab{
+                display: inline-flex; 
+                justify-content: center;
+                align-items: center; 
+                width: 120px; 
+                height: 35px; 
+                background-color: #19191a;
+                color: rgb(224, 220, 220);  
+                font-family: sans-serif; 
+                font-size: 0.9em; 
+                border-radius: 5px; 
+                margin: 10px;
+                margin-top: 20px; 
+            }
+            .lucky-tab{
+                display: inline-flex; 
+                justify-content: center;
+                align-items: center; 
+                width: 150px; 
+                height: 35px; 
+                background-color: #19191a;
+                color: rgb(224, 220, 220);  
+                font-family: sans-serif; 
+                font-size: 0.9em; 
+                border-radius: 5px;
+                margin: 10px; 
+                margin-top: 20px;
+            }
+            a{
+                color: rgb(248, 246, 246); 
+                text-decoration: none;
+            }
+            .row-5{
+                display: flex; 
+                justify-content: center;
+                margin: 10px;
+                font-family: sans-serif; 
+                color: rgb(189, 188, 188); 
+                font-size: 0.8em; 
+            }
+            .row-5 a{
+                color: rgb(164, 155, 248); 
+            }
+            button { 
+                padding: 0.4rem 1rem 0.4rem 1rem; 
+                margin-left: 1rem; 
+                border: none; 
+                border-radius: 10px; 
+                cursor: pointer; 
+                background-color: rgb(228, 228, 228);  
+                border: 1px solid rgba(0, 0, 0, 0.116); 
+            }
+        </style>
+    </head>
+    <body>
+        <div class="row-1">
+            <div class="header">
+                <a href="index.html">
+                    <p>Google</p>
+                </a>
+                <a href="advanced_search.html">
+                    <p>Advanced Search</p>
+                </a>
+            </div>
+        </div>
+        <div class="row-2">
+            <img src="https://www.google.lk/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png">
+        </div>
+        <div class="row-3">
+            <div class="google-search-form">
+                <form action="https://google.com/search">
+                    <input type="text" name="q" id="search-input" autocomplete=off>
+                    <button type="button" id="image-search-btn">Search</button>
+                </form>
+            </div>
+        </div>
+        <script> 
+            document.getElementById("search-input").addEventListener("keyup", function(event){
+                if(event.keyCode === 13){
+                    // search for spaces and replace them with "+"
+                    var text = document.getElementById("search-input").value; 
+                    for(var i=0; i<text.length; i++){
+                        if(text[i] == " "){
+                            text[i]  = "+"; 
+                        }
+                    }                    
+                    // https://www.google.com/search?q=lithika+damnod&tbm=isch
+                    window.location = "https://www.google.com/search?q="+text+"&tbm=isch"; 
+                }
+            })
+            document.getElementById("image-search-btn").addEventListener("click", function(event){
+                    // search for spaces and replace them with "+"
+                    var text = document.getElementById("search-input").value; 
+                    for(var i=0; i<text.length; i++){
+                        if(text[i] == " "){
+                            text[i]  = "+"; 
+                        }
+                    }                    
+                    // https://www.google.com/search?q=lithika+damnod&tbm=isch
+                    window.location = "https://www.google.com/search?q="+text+"&tbm=isch"; 
+                }
+            )
+        </script> 
+    </body>
+</html>
