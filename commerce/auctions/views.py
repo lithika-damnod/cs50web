@@ -159,7 +159,7 @@ def createListing(request):
         # add Each category to newEntry
         for c in cats: 
             # get the category object
-            category_object = Category.objects.get(id=c)
+            category_object = Category.objects.get(category=c)
             newEntry.category.add(category_object) 
 
         newEntry.save() 
