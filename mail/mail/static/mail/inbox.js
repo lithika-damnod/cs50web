@@ -168,11 +168,11 @@ function load_full_email(target) {
                 ${email.timestamp}
             </p>  
             <div class="email-view-btns">
-                <button class="btn btn-sm btn-outline-dark" id="reply-btn" onclick="handleReplying('${email.sender}', '${email.subject}', '${email.timestamp}', '${email.body}')">Reply</button>
+                <button class="btn btn-sm btn-outline-dark" id="reply-btn" onclick="handleReplying('${email.sender}', '${email.subject}', '${email.timestamp}')">Reply</button>
                 <button class="btn btn-sm btn-outline-dark" id="archive-btn" onclick="toggleArchive(${email.id}, ${email.archived})"> ${ (email.archived)?"Unarchive":"Archive"} </button>
             </div>
             <hr />
-            <h6>
+            <h6 id="email-body">
               ${email.body}
             </h6>
         </div>
@@ -180,7 +180,8 @@ function load_full_email(target) {
     });
 }
 
-function handleReplying(sender_email, subject, timestamp, body) { 
+function handleReplying(sender_email, subject, timestamp) { 
+  const body = document.getElementById("email-body").innerHTML; 
   compose_email(); 
   // set the value of recipient 
   document.getElementById("compose-recipients").value = sender_email; 
