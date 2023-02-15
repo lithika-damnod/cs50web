@@ -53,7 +53,7 @@ async function showProfileInfo(user_id, page=1) {
     // render components 
     document.getElementById("profile-info-username").innerHTML = account_data["username"];
     document.querySelector(".posts-container").innerHTML = ""; // clearing out all other components that might have existed before 
-    document.querySelector(".n-followers").innerHTML = `<b>${account_data["n_followers"]}</b>`; 
+    document.querySelector(".n-followers").innerHTML = `${account_data["n_followers"]}`; 
     document.querySelector(".n-following").innerHTML = `<b>${user_data["follows"]}</b>`; 
     let isFollowingJson = await fetch(`/api/user/${user_id}/follow`).then(response => response.json()); 
     let isFollowing = isFollowingJson["status"]; 
@@ -197,6 +197,7 @@ function triggerPostEditPanel(event) {
 
 function handleFollowing(user_id) {
     let current_btn_state = document.querySelector(".follow-btn").innerHTML; 
+    console.log("following runs!"); 
     if( current_btn_state === "Follow") {
         document.querySelector(".follow-btn").innerHTML = "Unfollow"; 
         document.querySelector(".follow-btn").classList.remove("btn-secondary"); 
