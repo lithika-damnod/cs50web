@@ -95,7 +95,7 @@ function load_mailbox(mailbox) {
             <div class="email-card" onclick="load_full_email(${emails[email].id})" >
                 <div class="email-card-header">
                     <h5 class="email-address">
-                        ${emails[email].recipient[0]}
+                        ${emails[email].recipients[0]}
                     </h5>
                     <h5 class="email-subject">
                         ${emails[email]["subject"]}
