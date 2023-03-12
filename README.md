@@ -14,7 +14,7 @@
   - `Design a Wikipedia-like online encyclopedia.`
   - [**View Branch:** `web50/projects/2020/x/wiki`](https://github.com/lithika-damnod/cs50web/tree/web50/projects/2020/x/wiki)
 - ### Commerce
-  - `Design an eBay-like e-commerce auction site that will allow users to post auction listings, place bids on listings, comment on those listings, and add listings to a “watchlist.”`
+  - `Design an eBay-like e-commerce auction site that will allow users to post auction listings, place bids on listings, comment on those listings, and add listings to a watchlist.`
   - [**View Branch:** `web50/projects/2020/x/commerce`](https://github.com/lithika-damnod/cs50web/tree/web50/projects/2020/x/commerce)
 - ### Mail
   - `Design a front-end for an email client that makes API calls to send and receive emails.`
